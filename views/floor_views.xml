@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="building_floor_list_view" model="ir.ui.view">
+        <field name="name">building.floor.list</field>
+        <field name="model">building.floor</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="building_id"/>
+            </list>
+        </field>
+    </record>
+    <record id="building_floor_form_view" model="ir.ui.view">
+        <field name="name">building.floor.form</field>
+        <field name="model">building.floor</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="building_id"/>
+                    </group>
+                    <notebook>
+                        <page string="Rooms">
+                            <field name="room_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="status"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_building_floor" model="ir.actions.act_window">
+        <field name="name">Floors</field>
+        <field name="res_model">building.floor</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

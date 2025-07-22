@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="dashboard_graph_view" model="ir.ui.view">
+        <field name="name">Office Management Dashboard Graph</field>
+        <field name="model">building.info</field>
+        <field name="type">graph</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="name" type="row"/>
+                <field name="room_count" type="measure"/>
+                <field name="occupied_room_count" type="measure"/>
+            </graph>
+        </field>
+    </record>
+    <record id="dashboard_pivot_view" model="ir.ui.view">
+        <field name="name">Office Management Dashboard Pivot</field>
+        <field name="model">building.info</field>
+        <field name="type">pivot</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="name" type="row"/>
+                <field name="room_count" type="measure"/>
+                <field name="occupied_room_count" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+    <record id="action_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard</field>
+        <field name="res_model">building.info</field>
+        <field name="view_mode">graph,pivot</field>
+    </record>
+</odoo>

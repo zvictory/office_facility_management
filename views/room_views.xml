@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="office_room_list_view" model="ir.ui.view">
+        <field name="name">office.room.list</field>
+        <field name="model">office.room</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="floor_id"/>
+		<field name="status" readonly="not is_status_editable"/>
+            </list>
+        </field>
+    </record>
+    <record id="office_room_form_view" model="ir.ui.view">
+        <field name="name">office.room.form</field>
+        <field name="model">office.room</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="floor_id"/>
+			<field name="status" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_office_room" model="ir.actions.act_window">
+        <field name="name">Rooms</field>
+        <field name="res_model">office.room</field>
+        <field name="view_mode">list,form</field>
+    </record>
+<record id="office_room_list_view_extension" model="ir.ui.view">
+    <field name="name">office.room.list.extension</field>
+    <field name="model">office.room</field>
+    <field name="inherit_id" ref="office_room_list_view"/>
+    <field name="arch" type="xml">
+        <field name="status" position="attributes">
+            <attribute name="readonly" groups="office_facility_management.group_facility_manager">0</attribute>  <!-- Editable for managers -->
+            <attribute name="readonly" groups="!office_facility_management.group_facility_manager">1</attribute>  <!-- Readonly for non-managers -->
+        </field>
+    </field>
+</record>
+</odoo>

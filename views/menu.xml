@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_office_management" name="Office Management"/>
+    <menuitem id="menu_dashboard" name="Dashboard" parent="menu_office_management" action="action_dashboard" sequence="1"/>
+    <menuitem id="menu_buildings" name="Buildings" parent="menu_office_management" action="action_building_info" sequence="10"/>
+    <menuitem id="menu_rooms" name="Rooms" parent="menu_office_management" action="action_office_room" sequence="20"/>
+    <menuitem id="menu_contracts" name="Contracts" parent="menu_office_management" action="action_office_contract" sequence="30"/>
+    <menuitem id="menu_configuration" name="Configuration" parent="menu_office_management" sequence="40"/>
+    <menuitem id="menu_floors" name="Floors" parent="menu_configuration" action="action_building_floor" sequence="10"/>
+</odoo>
