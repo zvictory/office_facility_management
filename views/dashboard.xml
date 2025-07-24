@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Dashboard Graph View -->
     <record id="dashboard_graph_view" model="ir.ui.view">
         <field name="name">Office Management Dashboard Graph</field>
         <field name="model">building.info</field>
@@ -12,6 +13,7 @@
             </graph>
         </field>
     </record>
+    
     <record id="dashboard_pivot_view" model="ir.ui.view">
         <field name="name">Office Management Dashboard Pivot</field>
         <field name="model">building.info</field>
@@ -24,9 +26,69 @@
             </pivot>
         </field>
     </record>
+
+    <!-- Color-Coded Room Map with Inline Styles -->
+    <record id="color_coded_room_map_view" model="ir.ui.view">
+        <field name="name">Color Coded Room Map</field>
+        <field name="model">office.room</field>
+        <field name="type">kanban</field>
+        <field name="arch" type="xml">
+            <kanban create="false" edit="false" delete="false" default_group_by="floor_id">
+                <field name="name"/>
+                <field name="status"/>
+                <field name="area"/>
+                <field name="floor_id"/>
+                <field name="current_contract_id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <!-- Room Card with Inline Color Styling -->
+                                <div class="room-card" 
+                                     t-att-style="'background-color: ' + 
+                                     (record.status.raw_value == 'available' ? '#28a745' : 
+                                      record.status.raw_value == 'occupied' ? '#dc3545' : 
+                                      record.status.raw_value == 'maintenance' ? '#ffc107' : '#6c757d') +
+                                     '; color: ' + 
+                                     (record.status.raw_value == 'maintenance' ? '#212529' : 'white') +
+                                     '; border: 3px solid ' + 
+                                     (record.status.raw_value == 'available' ? '#1e7e34' : 
+                                      record.status.raw_value == 'occupied' ? '#bd2130' : 
+                                      record.status.raw_value == 'maintenance' ? '#d39e00' : '#545b62') +
+                                     '; width: 120px; height: 90px; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 8px; cursor: pointer; font-weight: bold; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.2s ease;'">
+                                    <div style="font-size: 16px; margin-bottom: 5px;">
+                                        <field name="name"/>
+                                    </div>
+                                    <div style="font-size: 12px; margin-bottom: 3px;">
+                                        <field name="area"/>m²
+                                    </div>
+                                    <div style="font-size: 10px; text-transform: uppercase; opacity: 0.9;">
+                                        <field name="status"/>
+                                    </div>
+                                    <div style="font-size: 10px; margin-top: 2px;" t-if="record.current_contract_id.raw_value">
+                                        📝 Rented
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Actions -->
     <record id="action_dashboard" model="ir.actions.act_window">
         <field name="name">Dashboard</field>
         <field name="res_model">building.info</field>
         <field name="view_mode">graph,pivot</field>
+    </record>
+
+    <record id="action_room_map" model="ir.actions.act_window">
+        <field name="name">Room Availability Map</field>
+        <field name="res_model">office.room</field>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="color_coded_room_map_view"/>
+        <field name="context">{'group_by': 'floor_id'}</field>
     </record>
 </odoo>

@@ -364,12 +364,6 @@
             stroke-dasharray: 3,3;
         }
         
-        .stairs {
-            fill: var(--neutral-200);
-            stroke: var(--neutral-500);
-            stroke-width: 1;
-        }
-        
         /* Room labels */
         .room-label {
             font-size: 12px;
@@ -694,7 +688,7 @@
     </main>
 
     <script>
-        // Define building and floor data structure
+        // Define building and floor data structure with aligned rooms
         const buildings = {
             A: {
                 name: "КОРПУС А",
@@ -702,51 +696,49 @@
                     1: {
                         name: "КОРПУС А 1 этаж",
                         rooms: [
-                            { id: '1A', x: 400, y: 750, width: 180, height: 120, area: 45, occupied: true },
-                            { id: '2A', x: 400, y: 630, width: 180, height: 120, area: 54, occupied: true },
-                            { id: '3A', x: 400, y: 510, width: 180, height: 120, area: 45, occupied: true },
-                            { id: '4A', x: 400, y: 390, width: 180, height: 120, area: 45, occupied: false },
-                            { id: '5A', x: 400, y: 270, width: 180, height: 120, area: 45, occupied: true },
-                            { id: '0A', x: 220, y: 750, width: 180, height: 120, area: 45, occupied: true },
-                            { id: '2A', x: 220, y: 630, width: 180, height: 120, area: 54, occupied: false },
-                            { id: '4A', x: 220, y: 390, width: 180, height: 120, area: 45, occupied: true },
-                            { id: '6A', x: 220, y: 270, width: 180, height: 120, area: 45, occupied: true },
-                            { id: '8A', x: 220, y: 150, width: 180, height: 120, area: 45, occupied: true },
-                            { id: '10A', x: 220, y: 30, width: 180, height: 120, area: 36, occupied: false },
-                            { id: '7A', x: 400, y: 150, width: 90, height: 120, area: 27, occupied: true },
-                            { id: '9A', x: 490, y: 150, width: 90, height: 120, area: 27, occupied: true },
-                            { id: '11A', x: 310, y: 30, width: 90, height: 120, area: 27, occupied: true },
-                            { id: '12A', x: 220, y: 30, width: 90, height: 120, area: 27, occupied: true }
+                            // Left side rooms - aligned left
+                            { id: '0A', x: 50, y: 750, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '2A', x: 50, y: 630, width: 200, height: 120, area: 54, occupied: false },
+                            { id: '4A', x: 50, y: 390, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '6A', x: 50, y: 270, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '8A', x: 50, y: 150, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '10A', x: 50, y: 30, width: 200, height: 120, area: 36, occupied: false },
+                            
+                            // Right side rooms - aligned right
+                            { id: '1A', x: 350, y: 750, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '3A', x: 350, y: 510, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '5A', x: 350, y: 270, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '7A', x: 350, y: 150, width: 100, height: 120, area: 27, occupied: true },
+                            { id: '9A', x: 450, y: 150, width: 100, height: 120, area: 27, occupied: true },
+                            { id: '11A', x: 350, y: 30, width: 100, height: 120, area: 27, occupied: true },
+                            { id: '12A', x: 450, y: 30, width: 100, height: 120, area: 27, occupied: true }
                         ],
                         corridors: [
-                            { x: 220, y: 30, width: 180, height: 840 }
-                        ],
-                        stairs: [
-                            { x: 410, y: 130, width: 160, height: 120 }
+                            { x: 250, y: 30, width: 100, height: 840, name: "КОРИДОР" }
                         ]
                     },
                     2: {
                         name: "КОРПУС А 2 этаж",
                         rooms: [
-                            { id: '13A', x: 400, y: 270, width: 180, height: 120, area: 40, occupied: true, name: "ЗАЛ СОВЕЩАНИЙ" },
-                            { id: '14A', x: 220, y: 30, width: 180, height: 120, area: 42, occupied: true, name: "КОМНАТА ОТДЫХА" },
-                            { id: '15A', x: 400, y: 150, width: 180, height: 120, area: 40, occupied: true },
-                            { id: '16A', x: 220, y: 150, width: 90, height: 120, area: 25, occupied: true, name: "САНУЗЕЛ" },
-                            { id: '17A', x: 220, y: 270, width: 90, height: 120, area: 25, occupied: true, name: "КУХНЯ" },
-                            { id: '18A', x: 310, y: 270, width: 90, height: 120, area: 25, occupied: true, name: "САНУЗЕЛ" },
-                            { id: '19A', x: 220, y: 390, width: 180, height: 120, area: 42, occupied: true, name: "ПРИЕМНАЯ" },
-                            { id: '20A', x: 220, y: 510, width: 180, height: 120, area: 42, occupied: true, name: "БУХГАЛТЕРИЯ" },
-                            { id: '21A', x: 400, y: 510, width: 180, height: 120, area: 40, occupied: true },
-                            { id: '22A', x: 400, y: 630, width: 180, height: 120, area: 40, occupied: true },
-                            { id: '23A', x: 220, y: 630, width: 180, height: 120, area: 42, occupied: false },
-                            { id: '24A', x: 400, y: 750, width: 180, height: 120, area: 40, occupied: true },
-                            { id: '25A', x: 220, y: 750, width: 180, height: 120, area: 42, occupied: true }
+                            // Left side rooms - aligned left
+                            { id: '19A', x: 50, y: 390, width: 200, height: 120, area: 42, occupied: true, name: "ПРИЕМНАЯ" },
+                            { id: '20A', x: 50, y: 510, width: 200, height: 120, area: 42, occupied: true, name: "БУХГАЛТЕРИЯ" },
+                            { id: '23A', x: 50, y: 630, width: 200, height: 120, area: 42, occupied: false },
+                            { id: '25A', x: 50, y: 750, width: 200, height: 120, area: 42, occupied: true },
+                            { id: '14A', x: 50, y: 30, width: 200, height: 120, area: 42, occupied: true, name: "КОМНАТА ОТДЫХА" },
+                            { id: '16A', x: 50, y: 150, width: 100, height: 120, area: 25, occupied: true, name: "САНУЗЕЛ" },
+                            { id: '17A', x: 50, y: 270, width: 100, height: 120, area: 25, occupied: true, name: "КУХНЯ" },
+                            { id: '18A', x: 150, y: 270, width: 100, height: 120, area: 25, occupied: true, name: "САНУЗЕЛ" },
+                            
+                            // Right side rooms - aligned right
+                            { id: '13A', x: 350, y: 270, width: 200, height: 120, area: 40, occupied: true, name: "ЗАЛ СОВЕЩАНИЙ" },
+                            { id: '15A', x: 350, y: 150, width: 200, height: 120, area: 40, occupied: true },
+                            { id: '21A', x: 350, y: 510, width: 200, height: 120, area: 40, occupied: true },
+                            { id: '22A', x: 350, y: 630, width: 200, height: 120, area: 40, occupied: true },
+                            { id: '24A', x: 350, y: 750, width: 200, height: 120, area: 40, occupied: true }
                         ],
                         corridors: [
-                            { x: 220, y: 30, width: 180, height: 840 }
-                        ],
-                        stairs: [
-                            { x: 410, y: 130, width: 160, height: 120 }
+                            { x: 250, y: 30, width: 100, height: 840, name: "КОРИДОР" }
                         ]
                     }
                 }
@@ -757,46 +749,46 @@
                     1: {
                         name: "КОРПУС Б 1 этаж",
                         rooms: [
-                            { id: '1Б', x: 400, y: 750, width: 180, height: 120, area: 45, occupied: true },
-                            { id: '2Б', x: 400, y: 630, width: 180, height: 120, area: 45, occupied: false },
-                            { id: '3Б', x: 400, y: 510, width: 180, height: 120, area: 45, occupied: true },
-                            { id: '4Б', x: 400, y: 390, width: 180, height: 120, area: 45, occupied: true },
-                            { id: '5Б', x: 400, y: 270, width: 180, height: 120, area: 45, occupied: true },
-                            { id: '6Б', x: 220, y: 630, width: 180, height: 120, area: 54, occupied: true },
-                            { id: '7Б', x: 400, y: 150, width: 180, height: 120, area: 42, occupied: true },
-                            { id: '8Б', x: 220, y: 510, width: 180, height: 120, area: 54, occupied: false },
-                            { id: '9Б', x: 220, y: 390, width: 180, height: 120, area: 54, occupied: true },
-                            { id: '10Б', x: 220, y: 270, width: 180, height: 120, area: 54, occupied: true },
-                            { id: '11Б', x: 220, y: 150, width: 180, height: 120, area: 54, occupied: true },
-                            { id: '0Б', x: 220, y: 750, width: 180, height: 120, area: 45, occupied: false }
+                            // Left side rooms - aligned left
+                            { id: '0Б', x: 50, y: 750, width: 200, height: 120, area: 45, occupied: false },
+                            { id: '6Б', x: 50, y: 630, width: 200, height: 120, area: 54, occupied: true },
+                            { id: '8Б', x: 50, y: 510, width: 200, height: 120, area: 54, occupied: false },
+                            { id: '9Б', x: 50, y: 390, width: 200, height: 120, area: 54, occupied: true },
+                            { id: '10Б', x: 50, y: 270, width: 200, height: 120, area: 54, occupied: true },
+                            { id: '11Б', x: 50, y: 150, width: 200, height: 120, area: 54, occupied: true },
+                            
+                            // Right side rooms - aligned right
+                            { id: '1Б', x: 350, y: 750, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '2Б', x: 350, y: 630, width: 200, height: 120, area: 45, occupied: false },
+                            { id: '3Б', x: 350, y: 510, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '4Б', x: 350, y: 390, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '5Б', x: 350, y: 270, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '7Б', x: 350, y: 150, width: 200, height: 120, area: 42, occupied: true }
                         ],
                         corridors: [
-                            { x: 220, y: 30, width: 180, height: 840 }
-                        ],
-                        stairs: [
-                            { x: 410, y: 130, width: 160, height: 120 }
+                            { x: 250, y: 30, width: 100, height: 840, name: "КОРИДОР" }
                         ]
                     },
                     2: {
                         name: "КОРПУС Б 2 этаж",
                         rooms: [
-                            { id: '20Б', x: 400, y: 30, width: 180, height: 120, area: 45, occupied: true },
-                            { id: '21Б', x: 220, y: 30, width: 180, height: 120, area: 54, occupied: true },
-                            { id: '22Б', x: 400, y: 150, width: 180, height: 120, area: 45, occupied: true },
-                            { id: '23Б', x: 220, y: 150, width: 180, height: 120, area: 54, occupied: false },
-                            { id: '24Б', x: 400, y: 270, width: 180, height: 120, area: 45, occupied: true },
-                            { id: '25Б', x: 220, y: 270, width: 180, height: 120, area: 54, occupied: true },
-                            { id: '26Б', x: 400, y: 390, width: 180, height: 120, area: 45, occupied: true },
-                            { id: '27Б', x: 220, y: 390, width: 180, height: 120, area: 54, occupied: false },
-                            { id: '28Б', x: 400, y: 510, width: 180, height: 120, area: 45, occupied: true },
-                            { id: '29Б', x: 220, y: 510, width: 180, height: 120, area: 54, occupied: true },
-                            { id: '30Б', x: 400, y: 630, width: 180, height: 120, area: 45, occupied: true }
+                            // Left side rooms - aligned left
+                            { id: '21Б', x: 50, y: 30, width: 200, height: 120, area: 54, occupied: true },
+                            { id: '23Б', x: 50, y: 150, width: 200, height: 120, area: 54, occupied: false },
+                            { id: '25Б', x: 50, y: 270, width: 200, height: 120, area: 54, occupied: true },
+                            { id: '27Б', x: 50, y: 390, width: 200, height: 120, area: 54, occupied: false },
+                            { id: '29Б', x: 50, y: 510, width: 200, height: 120, area: 54, occupied: true },
+                            
+                            // Right side rooms - aligned right
+                            { id: '20Б', x: 350, y: 30, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '22Б', x: 350, y: 150, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '24Б', x: 350, y: 270, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '26Б', x: 350, y: 390, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '28Б', x: 350, y: 510, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '30Б', x: 350, y: 630, width: 200, height: 120, area: 45, occupied: true }
                         ],
                         corridors: [
-                            { x: 220, y: 30, width: 180, height: 720 }
-                        ],
-                        stairs: [
-                            { x: 410, y: 130, width: 160, height: 120 }
+                            { x: 250, y: 30, width: 100, height: 720, name: "КОРИДОР" }
                         ]
                     }
                 }
@@ -1478,11 +1470,11 @@
                 },
                 formatValue: (value) => `$${value.toFixed(2)}/м²`,
                 colorScale: [
-                    { value: 0, color: '#95a5a6' }, // Vacant
-                    { value: 4.0, color: '#3498db' }, // Low
-                    { value: 4.5, color: '#2ecc71' }, // Medium
-                    { value: 4.8, color: '#f39c12' }, // High
-                    { value: 5.0, color: '#e74c3c' }  // Very high
+                    { value: 0, color: '#9ca3af' }, // Vacant
+                    { value: 4.0, color: '#93c5fd' }, // Low
+                    { value: 4.5, color: '#34d399' }, // Medium
+                    { value: 4.8, color: '#fbbf24' }, // High
+                    { value: 5.0, color: '#f87171' }  // Very high
                 ],
                 legendTitle: 'Аренда за квадратный метр'
             },
@@ -1495,11 +1487,11 @@
                 },
                 formatValue: (value) => formatCurrency(value),
                 colorScale: [
-                    { value: 0, color: '#95a5a6' }, // Vacant
-                    { value: 150, color: '#3498db' }, // Low
-                    { value: 200, color: '#2ecc71' }, // Medium
-                    { value: 250, color: '#f39c12' }, // High
-                    { value: 300, color: '#e74c3c' }  // Very high
+                    { value: 0, color: '#9ca3af' }, // Vacant
+                    { value: 150, color: '#93c5fd' }, // Low
+                    { value: 200, color: '#34d399' }, // Medium
+                    { value: 250, color: '#fbbf24' }, // High
+                    { value: 300, color: '#f87171' }  // Very high
                 ],
                 legendTitle: 'Ежемесячная аренда'
             },
@@ -1511,8 +1503,8 @@
                 },
                 formatValue: (value) => value === 1 ? 'Занято' : 'Свободно',
                 colorScale: [
-                    { value: 0, color: '#95a5a6' }, // Vacant
-                    { value: 1, color: '#2ecc71' }  // Occupied
+                    { value: 0, color: '#9ca3af' }, // Vacant
+                    { value: 1, color: '#34d399' }  // Occupied
                 ],
                 legendTitle: 'Статус занятости'
             },
@@ -1524,11 +1516,11 @@
                 },
                 formatValue: (value) => value === 0 ? 'Нет контракта' : `${value} месяцев`,
                 colorScale: [
-                    { value: 0, color: '#95a5a6' }, // Vacant
-                    { value: 12, color: '#3498db' }, // 1 year
-                    { value: 24, color: '#2ecc71' }, // 2 years
-                    { value: 36, color: '#f39c12' }, // 3 years
-                    { value: 48, color: '#e74c3c' }  // 4+ years
+                    { value: 0, color: '#9ca3af' }, // Vacant
+                    { value: 12, color: '#93c5fd' }, // 1 year
+                    { value: 24, color: '#34d399' }, // 2 years
+                    { value: 36, color: '#fbbf24' }, // 3 years
+                    { value: 48, color: '#f87171' }  // 4+ years
                 ],
                 legendTitle: 'Срок контракта'
             },
@@ -1540,11 +1532,11 @@
                 },
                 formatValue: (value) => formatCurrency(value),
                 colorScale: [
-                    { value: 0, color: '#95a5a6' }, // Vacant
-                    { value: 4000, color: '#3498db' }, // Low
-                    { value: 5000, color: '#2ecc71' }, // Medium
-                    { value: 6000, color: '#f39c12' }, // High
-                    { value: 7000, color: '#e74c3c' }  // Very high
+                    { value: 0, color: '#9ca3af' }, // Vacant
+                    { value: 4000, color: '#93c5fd' }, // Low
+                    { value: 5000, color: '#34d399' }, // Medium
+                    { value: 6000, color: '#fbbf24' }, // High
+                    { value: 7000, color: '#f87171' }  // Very high
                 ],
                 legendTitle: 'Сумма депозита'
             },
@@ -1556,29 +1548,29 @@
                 },
                 formatValue: (value) => value,
                 colorScale: [
-                    { value: 'Свободно', color: '#95a5a6' },
-                    { value: 'IT-компания', color: '#3498db' },
-                    { value: 'Архитектура', color: '#9b59b6' },
-                    { value: 'Юридические услуги', color: '#2ecc71' },
-                    { value: 'Маркетинг', color: '#e67e22' },
-                    { value: 'Страхование', color: '#e74c3c' },
-                    { value: 'Дизайн', color: '#1abc9c' },
-                    { value: 'Медицина', color: '#34495e' },
-                    { value: 'Туризм', color: '#f1c40f' },
-                    { value: 'Бухгалтерия', color: '#d35400' },
-                    { value: 'Образование', color: '#16a085' },
-                    { value: 'Реклама', color: '#8e44ad' },
-                    { value: 'Консалтинг', color: '#2980b9' },
-                    { value: 'Финансы', color: '#c0392b' },
-                    { value: 'Общие помещения', color: '#7f8c8d' },
-                    { value: 'Администрация', color: '#27ae60' },
-                    { value: 'HR-услуги', color: '#f39c12' },
-                    { value: 'Аудит', color: '#2c3e50' },
-                    { value: 'Пищевая промышленность', color: '#16a085' },
-                    { value: 'Переводы', color: '#3498db' },
-                    { value: 'Издательское дело', color: '#9b59b6' },
-                    { value: 'Логистика', color: '#2ecc71' },
-                    { value: 'Строительство', color: '#e67e22' }
+                    { value: 'Свободно', color: '#9ca3af' },
+                    { value: 'IT-компания', color: '#60a5fa' },
+                    { value: 'Архитектура', color: '#c084fc' },
+                    { value: 'Юридические услуги', color: '#34d399' },
+                    { value: 'Маркетинг', color: '#f97316' },
+                    { value: 'Страхование', color: '#f43f5e' },
+                    { value: 'Дизайн', color: '#14b8a6' },
+                    { value: 'Медицина', color: '#374151' },
+                    { value: 'Туризм', color: '#fbbf24' },
+                    { value: 'Бухгалтерия', color: '#b45309' },
+                    { value: 'Образование', color: '#059669' },
+                    { value: 'Реклама', color: '#8b5cf6' },
+                    { value: 'Консалтинг', color: '#0ea5e9' },
+                    { value: 'Финансы', color: '#b91c1c' },
+                    { value: 'Общие помещения', color: '#6b7280' },
+                    { value: 'Администрация', color: '#10b981' },
+                    { value: 'HR-услуги', color: '#f59e0b' },
+                    { value: 'Аудит', color: '#1e293b' },
+                    { value: 'Пищевая промышленность', color: '#15803d' },
+                    { value: 'Переводы', color: '#3b82f6' },
+                    { value: 'Издательское дело', color: '#a855f7' },
+                    { value: 'Логистика', color: '#22c55e' },
+                    { value: 'Строительство', color: '#ea580c' }
                 ],
                 legendTitle: 'Типы бизнеса'
             }
@@ -1662,7 +1654,7 @@
                     .attr("text-anchor", "middle")
                     .attr("font-size", "12px")
                     .attr("font-weight", "bold")
-                    .text("КОРИДОР");
+                    .text(corridor.name || "КОРИДОР");
             });
             
             // Add rooms
@@ -1684,7 +1676,7 @@
                 .attr("data-occupied", d => d.occupied)
                 .attr("stroke", "#333")
                 .attr("stroke-width", 1)
-                .attr("fill", d => d.occupied ? "#3498db" : "#95a5a6");
+                .attr("fill", d => d.occupied ? "#93c5fd" : "#9ca3af");
             
             // Room labels
             roomGroups.append("text")
@@ -1695,10 +1687,9 @@
             
             // Room area labels
             roomGroups.append("text")
-                .attr("class", "room-label")
+                .attr("class", "room-area")
                 .attr("x", d => d.x + d.width / 2)
                 .attr("y", d => d.y + d.height / 2 + 20)
-                .attr("font-size", "10px")
                 .text(d => `${d.area} м²`);
                 
             // Room name labels if available
@@ -1707,7 +1698,6 @@
                 .attr("class", "room-name")
                 .attr("x", d => d.x + d.width / 2)
                 .attr("y", d => d.y + d.height / 2 - 20)
-                .attr("font-size", "10px")
                 .text(d => d.name);
             
             // Add doors for each room
@@ -1719,18 +1709,18 @@
                 const height = room.height;
                 
                 // Position doors based on room location
-                if (x > 300) {
-                    // Right side rooms, door on left
+                if (x < 300) {
+                    // Left side rooms, door on right (to corridor)
                     svg.append("rect")
-                        .attr("x", x - 5)
+                        .attr("x", x + width)
                         .attr("y", y + height / 2 - 10)
                         .attr("width", 5)
                         .attr("height", 20)
                         .attr("fill", "#333");
                 } else {
-                    // Left side rooms, door on right
+                    // Right side rooms, door on left (to corridor)
                     svg.append("rect")
-                        .attr("x", x + width)
+                        .attr("x", x - 5)
                         .attr("y", y + height / 2 - 10)
                         .attr("width", 5)
                         .attr("height", 20)
@@ -1755,7 +1745,7 @@
                 if (metricName === 'businessType') {
                     // For business type, exact match
                     const colorItem = metric.colorScale.find(item => item.value === value);
-                    color = colorItem ? colorItem.color : '#95a5a6';
+                    color = colorItem ? colorItem.color : '#9ca3af';
                 } else {
                     // For numerical metrics, find appropriate range
                     if (value === 0) {
@@ -1881,7 +1871,7 @@
                 if (isMatching) {
                     room.style("opacity", "1")
                         .attr("stroke-width", 3)
-                        .attr("stroke", "#3498db");
+                        .attr("stroke", "#2563eb");
                 } else {
                     room.style("opacity", "0.4")
                         .attr("stroke-width", 1)
@@ -2050,6 +2040,9 @@
                 contactTitle.textContent = 'Контактная информация';
                 contactSection.appendChild(contactTitle);
                 
+                const contactItems = document.createElement('div');
+                contactItems.className = 'contact-section';
+                
                 // Contact person
                 const contactPerson = document.createElement('div');
                 contactPerson.className = 'contact-item';
@@ -2068,9 +2061,10 @@
                 email.innerHTML = `<svg class="contact-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>`;
                 email.innerHTML += `<span>${tenant.contact.email}</span>`;
                 
-                contactSection.appendChild(contactPerson);
-                contactSection.appendChild(phone);
-                contactSection.appendChild(email);
+                contactItems.appendChild(contactPerson);
+                contactItems.appendChild(phone);
+                contactItems.appendChild(email);
+                contactSection.appendChild(contactItems);
                 
                 // Add all sections to the container
                 tenantDetailsContainer.appendChild(header);
@@ -2244,7 +2238,7 @@
             // Metric buttons
             document.querySelectorAll('.metric-btn').forEach(button => {
                 button.addEventListener('click', () => {
-// Remove active class from all buttons
+                    // Remove active class from all buttons
                     document.querySelectorAll('.metric-btn').forEach(btn => {
                         btn.classList.remove('active');
                     });

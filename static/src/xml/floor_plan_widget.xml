@@ -1,0 +1,83 @@
+<!-- File: static/src/xml/floor_plan_widget.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="FloorPlanWidgetTemplate">
+        <div class="o_floor_plan_widget">
+            <div class="controls">
+                <div class="building-selector">
+                    <h3>Выбрать здание и этаж</h3>
+                    <div class="building-tabs">
+                        <button class="building-tab active" data-building="A">Корпус А</button>
+                        <button class="building-tab" data-building="B">Корпус Б</button>
+                    </div>
+                    <div class="floor-tabs">
+                        <button class="floor-tab active" data-floor="1">1 этаж</button>
+                        <button class="floor-tab" data-floor="2">2 этаж</button>
+                    </div>
+                </div>
+                
+                <div class="metric-selector">
+                    <h3>Выбрать метрику</h3>
+                    <div class="metric-buttons">
+                        <button class="metric-btn active" data-metric="rentPerSqm">Аренда за м²</button>
+                        <button class="metric-btn" data-metric="totalRent">Общая аренда</button>
+                        <button class="metric-btn" data-metric="occupancyStatus">Статус занятости</button>
+                        <button class="metric-btn" data-metric="contractDuration">Срок контракта</button>
+                        <button class="metric-btn" data-metric="depositAmount">Сумма депозита</button>
+                        <button class="metric-btn" data-metric="businessType">Тип бизнеса</button>
+                    </div>
+                </div>
+                
+                <div class="legend">
+                    <h3>Легенда</h3>
+                    <div id="legend-items" class="legend-items"></div>
+                </div>
+                
+                <div class="summary">
+                    <h3>Сводка</h3>
+                    <div class="summary-content">
+                        <div class="summary-item">
+                            <span class="summary-label">Общая площадь:</span>
+                            <span class="summary-value" id="total-area">0 м²</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Занятая площадь:</span>
+                            <span class="summary-value" id="occupied-area">0 м²</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Уровень занятости:</span>
+                            <span class="summary-value" id="occupancy-rate">0%</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Ежемесячный доход:</span>
+                            <span class="summary-value" id="monthly-revenue">$0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Средняя аренда за м²:</span>
+                            <span class="summary-value" id="avg-rent">$0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="floor-plan-container">
+                <div class="floor-title" id="current-floor-title">КОРПУС А 1 этаж</div>
+                <div class="floor-plans-container">
+                    <div id="floorplan-A1" class="floor-plan-svg active"></div>
+                    <div id="floorplan-A2" class="floor-plan-svg"></div>
+                    <div id="floorplan-B1" class="floor-plan-svg"></div>
+                    <div id="floorplan-B2" class="floor-plan-svg"></div>
+                </div>
+                
+                <div class="tooltip" id="tooltip"></div>
+                
+                <div class="detail-panel">
+                    <button class="close-details" id="close-details">×</button>
+                    <div class="tenant-details" id="tenant-details">
+                        <!-- Tenant details will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

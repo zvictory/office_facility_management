@@ -1,0 +1,327 @@
+/* File: static/src/scss/floor_plan_widget.scss */
+.o_floor_plan_widget {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    height: 700px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    
+    .controls {
+        width: 320px;
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        height: 100%;
+        overflow-y: auto;
+    }
+    
+    .building-selector h3, 
+    .metric-selector h3,
+    .legend h3,
+    .summary h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+        color: #1f2937;
+    }
+    
+    .building-tabs, 
+    .floor-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        background-color: #f3f4f6;
+        border-radius: 0.5rem;
+        padding: 0.25rem;
+    }
+    
+    .building-tab, 
+    .floor-tab {
+        flex: 1;
+        padding: 0.5rem;
+        border: none;
+        border-radius: 0.375rem;
+        background-color: transparent;
+        color: #4b5563;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+    }
+    
+    .building-tab.active {
+        background-color: white;
+        color: #2563eb;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    
+    .floor-tab.active {
+        background-color: white;
+        color: #10b981;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    
+    .metric-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        background-color: #f3f4f6;
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+    }
+    
+    .metric-btn {
+        padding: 0.75rem 1rem;
+        border: none;
+        border-radius: 0.375rem;
+        background-color: transparent;
+        color: #4b5563;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: left;
+        position: relative;
+    }
+    
+    .metric-btn:hover {
+        background-color: #e5e7eb;
+    }
+    
+    .metric-btn.active {
+        background-color: white;
+        color: #2563eb;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    
+    .metric-btn.active::after {
+        content: "✓";
+        position: absolute;
+        right: 1rem;
+        color: #2563eb;
+        font-weight: bold;
+    }
+    
+    .legend-items {
+        background-color: #f3f4f6;
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        margin-bottom: 0.25rem;
+    }
+    
+    .legend-item:hover {
+        background-color: #e5e7eb;
+    }
+    
+    .color-box {
+        width: 16px;
+        height: 16px;
+        border-radius: 0.25rem;
+        flex-shrink: 0;
+    }
+    
+    .summary {
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid #e5e7eb;
+    }
+    
+    .summary-content {
+        background-color: #f3f4f6;
+        border-radius: 0.5rem;
+        padding: 1rem;
+    }
+    
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+    
+    .summary-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .summary-label {
+        font-weight: 500;
+        color: #4b5563;
+    }
+    
+    .summary-value {
+        font-weight: 600;
+        color: #1f2937;
+    }
+    
+    .floor-plan-container {
+        flex: 1;
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .floor-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 1.25rem;
+        color: #1f2937;
+    }
+    
+    .floor-plans-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+    
+    .floor-plan-svg {
+        max-width: 100%;
+        max-height: 100%;
+        display: none;
+    }
+    
+    .floor-plan-svg.active {
+        display: block;
+    }
+    
+    .room {
+        transition: all 0.3s ease;
+        cursor: pointer;
+        stroke: #d1d5db;
+        stroke-width: 1;
+    }
+    
+    .room:hover {
+        stroke-width: 2;
+        stroke: #2563eb;
+        filter: brightness(1.05);
+    }
+    
+    .corridor {
+        fill: #f9fafb;
+        stroke: #9ca3af;
+        stroke-width: 1;
+        stroke-dasharray: 3,3;
+    }
+    
+    .room-label {
+        font-size: 12px;
+        font-weight: 600;
+        text-anchor: middle;
+        dominant-baseline: middle;
+        pointer-events: none;
+        fill: #1f2937;
+    }
+    
+    .room-area {
+        font-size: 10px;
+        fill: #4b5563;
+        text-anchor: middle;
+        dominant-baseline: middle;
+        pointer-events: none;
+    }
+    
+    .room-name {
+        font-size: 10px;
+        fill: #4b5563;
+        text-anchor: middle;
+        dominant-baseline: middle;
+        pointer-events: none;
+    }
+    
+    .tooltip {
+        position: absolute;
+        background: #1f2937;
+        color: white;
+        padding: 0.75rem 1rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s;
+        z-index: 100;
+        max-width: 250px;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        line-height: 1.5;
+    }
+    
+    .detail-panel {
+        position: absolute;
+        top: 0;
+        right: -400px;
+        width: 360px;
+        height: 100%;
+        background: white;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        padding: 1.5rem;
+        transition: right 0.3s ease;
+        overflow-y: auto;
+        z-index: 10;
+        border-left: 1px solid #e5e7eb;
+    }
+    
+    .detail-panel.active {
+        right: 0;
+    }
+    
+    .close-details {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: #f3f4f6;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        font-size: 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #4b5563;
+        transition: all 0.2s;
+    }
+    
+    .close-details:hover {
+        background: #e5e7eb;
+        color: #1f2937;
+    }
+}
+
+/* Add responsive styles for smaller screens */
+@media (max-width: 992px) {
+    .o_floor_plan_widget {
+        flex-direction: column;
+        height: auto;
+        
+        .controls {
+            width: 100%;
+        }
+        
+        .detail-panel {
+            width: 100%;
+            right: -100%;
+        }
+    }
+}

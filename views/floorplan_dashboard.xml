@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Custom Dashboard View with Floor Plan Widget -->
+    <record id="view_office_floorplan_dashboard" model="ir.ui.view">
+        <field name="name">Office Floorplan Dashboard</field>
+        <field name="model">building.info</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Office Building Management Dashboard</h1>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <h2>Interactive Floor Plan</h2>
+                            <field name="id" widget="floor_plan_widget"/>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h2>Building Statistics</h2>
+                            <field name="id" widget="graph" options="{'type': 'bar', 'stacked': false}"/>
+                        </div>
+                        <div class="col-md-6">
+                            <h2>Occupancy Analysis</h2>
+                            <field name="id" widget="pivot"/>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <h2>Room Status Overview</h2>
+                            <field name="floor_ids" widget="many2many" mode="kanban" options="{'no_create': True}">
+                                <kanban>
+                                    <field name="name"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click">
+                                                <div class="oe_kanban_details">
+                                                    <h3><field name="name"/></h3>
+                                                    <div>
+                                                        <field name="room_ids" widget="many2many_tags"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for the Dashboard -->
+    <record id="action_office_floorplan_dashboard" model="ir.actions.act_window">
+        <field name="name">Interactive Floorplan Dashboard</field>
+        <field name="res_model">building.info</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_office_floorplan_dashboard"/>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Menu Item for the Dashboard -->
+    <menuitem id="menu_office_floorplan_dashboard"
+              name="Interactive Dashboard"
+              parent="menu_office_facility_root"
+              action="action_office_floorplan_dashboard"
+              sequence="5"/>
+</odoo>
