@@ -2,6 +2,8 @@
 <odoo>
     <menuitem id="menu_office_management" name="Office Management"/>
     <menuitem id="menu_dashboard" name="Dashboard" parent="menu_office_management" action="action_dashboard" sequence="1"/>
+    <menuitem id="menu_office_floorplan_dashboard" name="Interactive Dashboard" parent="menu_office_management" action="action_office_floorplan_dashboard" sequence="5"/>
+    <menuitem id="menu_room_map" name="Room Map" parent="menu_office_management" action="action_room_map" sequence="6"/>
     <menuitem id="menu_buildings" name="Buildings" parent="menu_office_management" action="action_building_info" sequence="10"/>
     <menuitem id="menu_rooms" name="Rooms" parent="menu_office_management" action="action_office_room" sequence="20"/>
     <menuitem id="menu_contracts" name="Contracts" parent="menu_office_management" action="action_office_contract" sequence="30"/>

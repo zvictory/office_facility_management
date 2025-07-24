@@ -30,74 +30,74 @@
 
     <!-- 64 Rooms (16 per floor) -->
     <!-- Rooms for floor_a1 (1A-qavat) -->
-    <record id="room_1" model="office.room"><field name="name">Room 1A01</field><field name="floor_id" ref="floor_a1"/><field name="status">available</field></record>
+    <record id="room_1" model="office.room"><field name="name">Room 1A01</field><field name="floor_id" ref="floor_a1"/><field name="area">65</field><field name="status">available</field></record>
     <record id="room_2" model="office.room"><field name="name">Room 1A02</field><field name="floor_id" ref="floor_a1"/><field name="status">available</field></record>
     <record id="room_3" model="office.room"><field name="name">Room 1A03</field><field name="floor_id" ref="floor_a1"/><field name="status">available</field></record>
     <record id="room_4" model="office.room"><field name="name">Room 1A04</field><field name="floor_id" ref="floor_a1"/><field name="status">available</field></record>
     <record id="room_5" model="office.room"><field name="name">Room 1A05</field><field name="floor_id" ref="floor_a1"/><field name="status">available</field></record>
     <record id="room_6" model="office.room"><field name="name">Room 1A06</field><field name="floor_id" ref="floor_a1"/><field name="status">available</field></record>
     <record id="room_7" model="office.room"><field name="name">Room 1A07</field><field name="floor_id" ref="floor_a1"/><field name="status">available</field></record>
-    <record id="room_8" model="office.room"><field name="name">Room 1A08</field><field name="floor_id" ref="floor_a1"/><field name="status">available</field></record>
+    <record id="room_8" model="office.room"><field name="name">Room 1A08</field><field name="floor_id" ref="floor_a1"/><field name="area">100</field><field name="status">available</field></record>
     <record id="room_9" model="office.room"><field name="name">Room 1A09</field><field name="floor_id" ref="floor_a1"/><field name="status">available</field></record>
     <record id="room_10" model="office.room"><field name="name">Room 1A10</field><field name="floor_id" ref="floor_a1"/><field name="status">available</field></record>
     <record id="room_11" model="office.room"><field name="name">Room 1A11</field><field name="floor_id" ref="floor_a1"/><field name="status">available</field></record>
     <record id="room_12" model="office.room"><field name="name">Room 1A12</field><field name="floor_id" ref="floor_a1"/><field name="status">available</field></record>
     <record id="room_13" model="office.room"><field name="name">Room 1A13</field><field name="floor_id" ref="floor_a1"/><field name="status">available</field></record>
     <record id="room_14" model="office.room"><field name="name">Room 1A14</field><field name="floor_id" ref="floor_a1"/><field name="status">available</field></record>
-    <record id="room_15" model="office.room"><field name="name">Room 1A15</field><field name="floor_id" ref="floor_a1"/><field name="status">available</field></record>
-    <record id="room_16" model="office.room"><field name="name">Room 1A16</field><field name="floor_id" ref="floor_a1"/><field name="status">available</field></record>
+    <record id="room_15" model="office.room"><field name="name">Room 1A15</field><field name="floor_id" ref="floor_a1"/><field name="area">30</field><field name="status">available</field></record>
+    <record id="room_16" model="office.room"><field name="name">Room 1A16</field><field name="floor_id" ref="floor_a1"/><field name="area">100</field><field name="status">available</field></record>
 
     <!-- Rooms for floor_a2 (2A-qavat) -->
-    <record id="room_17" model="office.room"><field name="name">Room 2A01</field><field name="floor_id" ref="floor_a2"/><field name="status">available</field></record>
+    <record id="room_17" model="office.room"><field name="name">Room 2A01</field><field name="floor_id" ref="floor_a2"/><field name="area">65</field><field name="status">available</field></record>
     <record id="room_18" model="office.room"><field name="name">Room 2A02</field><field name="floor_id" ref="floor_a2"/><field name="status">available</field></record>
     <record id="room_19" model="office.room"><field name="name">Room 2A03</field><field name="floor_id" ref="floor_a2"/><field name="status">available</field></record>
     <record id="room_20" model="office.room"><field name="name">Room 2A04</field><field name="floor_id" ref="floor_a2"/><field name="status">available</field></record>
     <record id="room_21" model="office.room"><field name="name">Room 2A05</field><field name="floor_id" ref="floor_a2"/><field name="status">available</field></record>
     <record id="room_22" model="office.room"><field name="name">Room 2A06</field><field name="floor_id" ref="floor_a2"/><field name="status">available</field></record>
     <record id="room_23" model="office.room"><field name="name">Room 2A07</field><field name="floor_id" ref="floor_a2"/><field name="status">available</field></record>
-    <record id="room_24" model="office.room"><field name="name">Room 2A08</field><field name="floor_id" ref="floor_a2"/><field name="status">available</field></record>
+    <record id="room_24" model="office.room"><field name="name">Room 2A08</field><field name="floor_id" ref="floor_a2"/><field name="area">100</field><field name="status">available</field></record>
     <record id="room_25" model="office.room"><field name="name">Room 2A09</field><field name="floor_id" ref="floor_a2"/><field name="status">available</field></record>
     <record id="room_26" model="office.room"><field name="name">Room 2A10</field><field name="floor_id" ref="floor_a2"/><field name="status">available</field></record>
     <record id="room_27" model="office.room"><field name="name">Room 2A11</field><field name="floor_id" ref="floor_a2"/><field name="status">available</field></record>
     <record id="room_28" model="office.room"><field name="name">Room 2A12</field><field name="floor_id" ref="floor_a2"/><field name="status">available</field></record>
     <record id="room_29" model="office.room"><field name="name">Room 2A13</field><field name="floor_id" ref="floor_a2"/><field name="status">available</field></record>
     <record id="room_30" model="office.room"><field name="name">Room 2A14</field><field name="floor_id" ref="floor_a2"/><field name="status">available</field></record>
-    <record id="room_31" model="office.room"><field name="name">Room 2A15</field><field name="floor_id" ref="floor_a2"/><field name="status">available</field></record>
-    <record id="room_32" model="office.room"><field name="name">Room 2A16</field><field name="floor_id" ref="floor_a2"/><field name="status">available</field></record>
+    <record id="room_31" model="office.room"><field name="name">Room 2A15</field><field name="floor_id" ref="floor_a2"/><field name="area">30</field><field name="status">available</field></record>
+    <record id="room_32" model="office.room"><field name="name">Room 2A16</field><field name="floor_id" ref="floor_a2"/><field name="area">100</field><field name="status">available</field></record>
 
     <!-- Rooms for floor_b1 (1B-qavat) -->
-    <record id="room_33" model="office.room"><field name="name">Room 1B01</field><field name="floor_id" ref="floor_b1"/><field name="status">available</field></record>
+    <record id="room_33" model="office.room"><field name="name">Room 1B01</field><field name="floor_id" ref="floor_b1"/><field name="area">65</field><field name="status">available</field></record>
     <record id="room_34" model="office.room"><field name="name">Room 1B02</field><field name="floor_id" ref="floor_b1"/><field name="status">available</field></record>
     <record id="room_35" model="office.room"><field name="name">Room 1B03</field><field name="floor_id" ref="floor_b1"/><field name="status">available</field></record>
     <record id="room_36" model="office.room"><field name="name">Room 1B04</field><field name="floor_id" ref="floor_b1"/><field name="status">available</field></record>
     <record id="room_37" model="office.room"><field name="name">Room 1B05</field><field name="floor_id" ref="floor_b1"/><field name="status">available</field></record>
     <record id="room_38" model="office.room"><field name="name">Room 1B06</field><field name="floor_id" ref="floor_b1"/><field name="status">available</field></record>
     <record id="room_39" model="office.room"><field name="name">Room 1B07</field><field name="floor_id" ref="floor_b1"/><field name="status">available</field></record>
-    <record id="room_40" model="office.room"><field name="name">Room 1B08</field><field name="floor_id" ref="floor_b1"/><field name="status">available</field></record>
+    <record id="room_40" model="office.room"><field name="name">Room 1B08</field><field name="floor_id" ref="floor_b1"/><field name="area">100</field><field name="status">available</field></record>
     <record id="room_41" model="office.room"><field name="name">Room 1B09</field><field name="floor_id" ref="floor_b1"/><field name="status">available</field></record>
     <record id="room_42" model="office.room"><field name="name">Room 1B10</field><field name="floor_id" ref="floor_b1"/><field name="status">available</field></record>
     <record id="room_43" model="office.room"><field name="name">Room 1B11</field><field name="floor_id" ref="floor_b1"/><field name="status">available</field></record>
     <record id="room_44" model="office.room"><field name="name">Room 1B12</field><field name="floor_id" ref="floor_b1"/><field name="status">available</field></record>
     <record id="room_45" model="office.room"><field name="name">Room 1B13</field><field name="floor_id" ref="floor_b1"/><field name="status">available</field></record>
     <record id="room_46" model="office.room"><field name="name">Room 1B14</field><field name="floor_id" ref="floor_b1"/><field name="status">available</field></record>
-    <record id="room_47" model="office.room"><field name="name">Room 1B15</field><field name="floor_id" ref="floor_b1"/><field name="status">available</field></record>
-    <record id="room_48" model="office.room"><field name="name">Room 1B16</field><field name="floor_id" ref="floor_b1"/><field name="status">available</field></record>
+    <record id="room_47" model="office.room"><field name="name">Room 1B15</field><field name="floor_id" ref="floor_b1"/><field name="area">30</field><field name="status">available</field></record>
+    <record id="room_48" model="office.room"><field name="name">Room 1B16</field><field name="floor_id" ref="floor_b1"/><field name="area">100</field><field name="status">available</field></record>
 
     <!-- Rooms for floor_b2 (2B-qavat) -->
-    <record id="room_49" model="office.room"><field name="name">Room 2B01</field><field name="floor_id" ref="floor_b2"/><field name="status">available</field></record>
+    <record id="room_49" model="office.room"><field name="name">Room 2B01</field><field name="floor_id" ref="floor_b2"/><field name="area">65</field><field name="status">available</field></record>
     <record id="room_50" model="office.room"><field name="name">Room 2B02</field><field name="floor_id" ref="floor_b2"/><field name="status">available</field></record>
     <record id="room_51" model="office.room"><field name="name">Room 2B03</field><field name="floor_id" ref="floor_b2"/><field name="status">available</field></record>
     <record id="room_52" model="office.room"><field name="name">Room 2B04</field><field name="floor_id" ref="floor_b2"/><field name="status">available</field></record>
     <record id="room_53" model="office.room"><field name="name">Room 2B05</field><field name="floor_id" ref="floor_b2"/><field name="status">available</field></record>
     <record id="room_54" model="office.room"><field name="name">Room 2B06</field><field name="floor_id" ref="floor_b2"/><field name="status">available</field></record>
     <record id="room_55" model="office.room"><field name="name">Room 2B07</field><field name="floor_id" ref="floor_b2"/><field name="status">available</field></record>
-    <record id="room_56" model="office.room"><field name="name">Room 2B08</field><field name="floor_id" ref="floor_b2"/><field name="status">available</field></record>
+    <record id="room_56" model="office.room"><field name="name">Room 2B08</field><field name="floor_id" ref="floor_b2"/><field name="area">100</field><field name="status">available</field></record>
     <record id="room_57" model="office.room"><field name="name">Room 2B09</field><field name="floor_id" ref="floor_b2"/><field name="status">available</field></record>
     <record id="room_58" model="office.room"><field name="name">Room 2B10</field><field name="floor_id" ref="floor_b2"/><field name="status">available</field></record>
     <record id="room_59" model="office.room"><field name="name">Room 2B11</field><field name="floor_id" ref="floor_b2"/><field name="status">available</field></record>
     <record id="room_60" model="office.room"><field name="name">Room 2B12</field><field name="floor_id" ref="floor_b2"/><field name="status">available</field></record>
     <record id="room_61" model="office.room"><field name="name">Room 2B13</field><field name="floor_id" ref="floor_b2"/><field name="status">available</field></record>
     <record id="room_62" model="office.room"><field name="name">Room 2B14</field><field name="floor_id" ref="floor_b2"/><field name="status">available</field></record>
-    <record id="room_63" model="office.room"><field name="name">Room 2B15</field><field name="floor_id" ref="floor_b2"/><field name="status">available</field></record>
-    <record id="room_64" model="office.room"><field name="name">Room 2B16</field><field name="floor_id" ref="floor_b2"/><field name="status">available</field></record>
+    <record id="room_63" model="office.room"><field name="name">Room 2B15</field><field name="floor_id" ref="floor_b2"/><field name="area">30</field><field name="status">available</field></record>
+    <record id="room_64" model="office.room"><field name="name">Room 2B16</field><field name="floor_id" ref="floor_b2"/><field name="area">100</field><field name="status">available</field></record>
 </odoo>

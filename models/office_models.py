@@ -30,6 +30,7 @@ class OfficeRoom(models.Model):
 
     name = fields.Char(string='Name', required=True)
     floor_id = fields.Many2one('building.floor', string='Floor', required=True)
+    area = fields.Float(string='Area (m²)', required=True, default=45.0)
     status = fields.Selection([('available', 'Available'), ('occupied', 'Occupied')], default='available')
     current_contract_id = fields.Many2one('office.contract', string='Current Contract')
     is_status_editable = fields.Boolean(compute='_compute_is_status_editable')

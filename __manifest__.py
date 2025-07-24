@@ -28,7 +28,7 @@
             'office_facility_management/static/src/xml/floor_plan_widget.xml',
         ],
     },
-    'demo': ['demo/demo.xml'],
+    # 'demo': ['demo/demo.xml'],  # Temporarily disabled for testing
     'installable': True,
     'application': True,
 }

@@ -1,5 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_building_info,access_building_info,model_building_info,,1,1,1,1
 access_building_floor,access_building_floor,model_building_floor,,1,1,1,1
-access_office_room,access_office_room,model_office_room,office_facility_management.group_facility_manager,1,1,1,1
+access_office_room_user,access_office_room_user,model_office_room,,1,0,0,0
+access_office_room_manager,access_office_room_manager,model_office_room,office_facility_management.group_facility_manager,1,1,1,1
 access_office_contract,access_office_contract,model_office_contract,,1,1,1,1

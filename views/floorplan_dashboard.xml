@@ -61,11 +61,4 @@
         <field name="view_id" ref="view_office_floorplan_dashboard"/>
         <field name="target">current</field>
     </record>
-
-    <!-- Menu Item for the Dashboard -->
-    <menuitem id="menu_office_floorplan_dashboard"
-              name="Interactive Dashboard"
-              parent="menu_office_facility_root"
-              action="action_office_floorplan_dashboard"
-              sequence="5"/>
 </odoo>
