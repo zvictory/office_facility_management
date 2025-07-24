@@ -1,0 +1,2303 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление офисным комплексом</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        /* Base and Typography */
+        :root {
+            /* Primary color palette */
+            --primary: #2563eb;
+            --primary-light: #93c5fd;
+            --primary-dark: #1e40af;
+            
+            /* Secondary and accent colors */
+            --secondary: #10b981;
+            --secondary-light: #a7f3d0;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            
+            /* Neutrals */
+            --neutral-50: #f9fafb;
+            --neutral-100: #f3f4f6;
+            --neutral-200: #e5e7eb;
+            --neutral-300: #d1d5db;
+            --neutral-400: #9ca3af;
+            --neutral-500: #6b7280;
+            --neutral-600: #4b5563;
+            --neutral-700: #374151;
+            --neutral-800: #1f2937;
+            --neutral-900: #111827;
+            
+            /* Vacant room */
+            --vacant: #9ca3af;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            
+            /* Rounded corners */
+            --radius-sm: 0.25rem;
+            --radius-md: 0.375rem;
+            --radius-lg: 0.5rem;
+            --radius-xl: 0.75rem;
+            
+            /* Spacing */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-10: 2.5rem;
+            --space-12: 3rem;
+            --space-16: 4rem;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: var(--neutral-100);
+            color: var(--neutral-800);
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            line-height: 1.5;
+            font-size: 16px;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            line-height: 1.25;
+            margin-bottom: var(--space-2);
+            color: var(--neutral-900);
+        }
+        
+        /* Header */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: var(--space-4) var(--space-6);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            z-index: 10;
+        }
+        
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            margin: 0;
+        }
+        
+        /* Main layout */
+        main {
+            display: flex;
+            flex: 1;
+            padding: var(--space-6);
+            gap: var(--space-6);
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        /* Controls panel */
+        .controls {
+            width: 320px;
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
+            height: fit-content;
+        }
+        
+        /* Building selector */
+        .building-selector h3 {
+            font-size: 1.1rem;
+            margin-bottom: var(--space-3);
+        }
+        
+        .building-tabs {
+            display: flex;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
+            background-color: var(--neutral-100);
+            border-radius: var(--radius-lg);
+            padding: var(--space-1);
+        }
+        
+        .building-tab {
+            flex: 1;
+            padding: var(--space-2) var(--space-3);
+            border: none;
+            border-radius: var(--radius-md);
+            background-color: transparent;
+            color: var(--neutral-700);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        
+        .building-tab.active {
+            background-color: white;
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .floor-tabs {
+            display: flex;
+            gap: var(--space-2);
+            background-color: var(--neutral-100);
+            border-radius: var(--radius-lg);
+            padding: var(--space-1);
+        }
+        
+        .floor-tab {
+            flex: 1;
+            padding: var(--space-2) var(--space-3);
+            border: none;
+            border-radius: var(--radius-md);
+            background-color: transparent;
+            color: var(--neutral-700);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        
+        .floor-tab.active {
+            background-color: white;
+            color: var(--secondary);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        /* Metric selector */
+        .metric-selector h3 {
+            font-size: 1.1rem;
+            margin-bottom: var(--space-3);
+        }
+        
+        .metric-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+            background-color: var(--neutral-100);
+            border-radius: var(--radius-lg);
+            padding: var(--space-2);
+        }
+        
+        .metric-btn {
+            padding: var(--space-3) var(--space-4);
+            border: none;
+            border-radius: var(--radius-md);
+            background-color: transparent;
+            color: var(--neutral-700);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            position: relative;
+        }
+        
+        .metric-btn:hover {
+            background-color: var(--neutral-200);
+        }
+        
+        .metric-btn.active {
+            background-color: white;
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .metric-btn.active::after {
+            content: "✓";
+            position: absolute;
+            right: var(--space-4);
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        /* Legend */
+        .legend h3 {
+            font-size: 1.1rem;
+            margin-bottom: var(--space-3);
+        }
+        
+        .legend-items {
+            background-color: var(--neutral-100);
+            border-radius: var(--radius-lg);
+            padding: var(--space-3);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-2);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-bottom: var(--space-1);
+        }
+        
+        .legend-item:hover {
+            background-color: var(--neutral-200);
+        }
+        
+        .color-box {
+            width: 16px;
+            height: 16px;
+            border-radius: var(--radius-sm);
+            flex-shrink: 0;
+        }
+        
+        /* Summary */
+        .summary {
+            margin-top: auto;
+            padding-top: var(--space-4);
+            border-top: 1px solid var(--neutral-200);
+        }
+        
+        .summary h3 {
+            font-size: 1.1rem;
+            margin-bottom: var(--space-3);
+        }
+        
+        .summary-content {
+            background-color: var(--neutral-100);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-3);
+        }
+        
+        .summary-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .summary-label {
+            font-weight: 500;
+            color: var(--neutral-600);
+        }
+        
+        .summary-value {
+            font-weight: 600;
+            color: var(--neutral-900);
+        }
+        
+        /* Floor plan container */
+        .floor-plan-container {
+            flex: 1;
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .floor-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: var(--space-5);
+            color: var(--neutral-900);
+        }
+        
+        .floor-plans-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .floor-plan-svg {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+        }
+        
+        .floor-plan-svg.active {
+            display: block;
+        }
+        
+        /* Rooms and elements */
+        .room {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            stroke: var(--neutral-300);
+            stroke-width: 1;
+        }
+        
+        .room:hover {
+            stroke-width: 2;
+            stroke: var(--primary);
+            filter: brightness(1.05);
+        }
+        
+        .corridor {
+            fill: var(--neutral-100);
+            stroke: var(--neutral-400);
+            stroke-width: 1;
+            stroke-dasharray: 3,3;
+        }
+        
+        /* Room labels */
+        .room-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            pointer-events: none;
+            fill: var(--neutral-900);
+        }
+        
+        .room-area {
+            font-size: 10px;
+            fill: var(--neutral-600);
+            text-anchor: middle;
+            dominant-baseline: middle;
+            pointer-events: none;
+        }
+        
+        .room-name {
+            font-size: 10px;
+            fill: var(--neutral-600);
+            text-anchor: middle;
+            dominant-baseline: middle;
+            pointer-events: none;
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: var(--neutral-800);
+            color: white;
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 100;
+            max-width: 250px;
+            box-shadow: var(--shadow-lg);
+            line-height: 1.5;
+        }
+        
+        /* Detail panel */
+        .detail-panel {
+            position: absolute;
+            top: 0;
+            right: -400px;
+            width: 360px;
+            height: 100%;
+            background: white;
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-6);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+            z-index: 10;
+            border-left: 1px solid var(--neutral-200);
+        }
+        
+        .detail-panel.active {
+            right: 0;
+        }
+        
+        .close-details {
+            position: absolute;
+            top: var(--space-4);
+            right: var(--space-4);
+            background: var(--neutral-100);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--neutral-600);
+            transition: all 0.2s;
+        }
+        
+        .close-details:hover {
+            background: var(--neutral-200);
+            color: var(--neutral-900);
+        }
+        
+        .tenant-details {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
+        }
+        
+        .tenant-header {
+            border-bottom: 1px solid var(--neutral-200);
+            padding-bottom: var(--space-4);
+        }
+        
+        .room-id {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: var(--space-2);
+            color: var(--neutral-900);
+        }
+        
+        .tenant-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: var(--space-1);
+            color: var(--neutral-800);
+        }
+        
+        .business-type {
+            font-size: 0.875rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+        
+        .detail-section h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--space-3);
+            color: var(--neutral-800);
+            padding-bottom: var(--space-2);
+            border-bottom: 1px solid var(--neutral-200);
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4) var(--space-3);
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .detail-label {
+            font-size: 0.75rem;
+            color: var(--neutral-500);
+            margin-bottom: var(--space-1);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .detail-value {
+            font-size: 0.9375rem;
+            font-weight: 500;
+            color: var(--neutral-900);
+        }
+        
+        .contact-section {
+            margin-top: var(--space-2);
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-3);
+            padding: var(--space-2) var(--space-3);
+            background-color: var(--neutral-100);
+            border-radius: var(--radius-md);
+        }
+        
+        .contact-icon {
+            width: 18px;
+            height: 18px;
+            opacity: 0.7;
+            color: var(--primary);
+        }
+        
+        .vacant-message {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 250px;
+            text-align: center;
+            color: var(--neutral-500);
+            padding: var(--space-6);
+            background-color: var(--neutral-50);
+            border-radius: var(--radius-lg);
+            border: 2px dashed var(--neutral-300);
+            margin-top: var(--space-4);
+        }
+        
+        .vacant-icon {
+            font-size: 3rem;
+            margin-bottom: var(--space-4);
+            color: var(--neutral-400);
+        }
+        
+        .vacant-message h3 {
+            color: var(--neutral-700);
+            margin-bottom: var(--space-2);
+        }
+        
+        .vacant-message p {
+            color: var(--neutral-500);
+        }
+        
+        .animate-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            main {
+                padding: var(--space-4);
+                gap: var(--space-4);
+            }
+            
+            .controls {
+                width: 280px;
+                padding: var(--space-4);
+            }
+        }
+        
+        @media (max-width: 992px) {
+            main {
+                flex-direction: column;
+            }
+            
+            .controls {
+                width: 100%;
+            }
+            
+            .detail-panel {
+                width: 100%;
+                right: -100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Управление офисным комплексом</h1>
+    </header>
+    
+    <main>
+        <div class="controls">
+            <div class="building-selector">
+                <h3>Выбрать здание и этаж</h3>
+                <div class="building-tabs">
+                    <button class="building-tab active" data-building="A">Корпус А</button>
+                    <button class="building-tab" data-building="B">Корпус Б</button>
+                </div>
+                <div class="floor-tabs">
+                    <button class="floor-tab active" data-floor="1">1 этаж</button>
+                    <button class="floor-tab" data-floor="2">2 этаж</button>
+                </div>
+            </div>
+            
+            <div class="metric-selector">
+                <h3>Выбрать метрику</h3>
+                <div class="metric-buttons">
+                    <button class="metric-btn active" data-metric="rentPerSqm">Аренда за м²</button>
+                    <button class="metric-btn" data-metric="totalRent">Общая аренда</button>
+                    <button class="metric-btn" data-metric="occupancyStatus">Статус занятости</button>
+                    <button class="metric-btn" data-metric="contractDuration">Срок контракта</button>
+                    <button class="metric-btn" data-metric="depositAmount">Сумма депозита</button>
+                    <button class="metric-btn" data-metric="businessType">Тип бизнеса</button>
+                </div>
+            </div>
+            
+            <div class="legend">
+                <h3>Легенда</h3>
+                <div id="legend-items" class="legend-items"></div>
+            </div>
+            
+            <div class="summary">
+                <h3>Сводка</h3>
+                <div class="summary-content">
+                    <div class="summary-item">
+                        <span class="summary-label">Общая площадь:</span>
+                        <span class="summary-value" id="total-area">0 м²</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Занятая площадь:</span>
+                        <span class="summary-value" id="occupied-area">0 м²</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Уровень занятости:</span>
+                        <span class="summary-value" id="occupancy-rate">0%</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Ежемесячный доход:</span>
+                        <span class="summary-value" id="monthly-revenue">$0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Средняя аренда за м²:</span>
+                        <span class="summary-value" id="avg-rent">$0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="floor-plan-container">
+            <div class="floor-title" id="current-floor-title">КОРПУС А 1 этаж</div>
+            <div class="floor-plans-container">
+                <div id="floorplan-A1" class="floor-plan-svg active"></div>
+                <div id="floorplan-A2" class="floor-plan-svg"></div>
+                <div id="floorplan-B1" class="floor-plan-svg"></div>
+                <div id="floorplan-B2" class="floor-plan-svg"></div>
+            </div>
+            
+            <div class="tooltip" id="tooltip"></div>
+            
+            <div class="detail-panel">
+                <button class="close-details" id="close-details">×</button>
+                <div class="tenant-details" id="tenant-details">
+                    <!-- Tenant details will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Define building and floor data structure with aligned rooms
+        const buildings = {
+            A: {
+                name: "КОРПУС А",
+                floors: {
+                    1: {
+                        name: "КОРПУС А 1 этаж",
+                        rooms: [
+                            // Left side rooms - aligned left
+                            { id: '0A', x: 50, y: 750, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '2A', x: 50, y: 630, width: 200, height: 120, area: 54, occupied: false },
+                            { id: '4A', x: 50, y: 390, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '6A', x: 50, y: 270, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '8A', x: 50, y: 150, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '10A', x: 50, y: 30, width: 200, height: 120, area: 36, occupied: false },
+                            
+                            // Right side rooms - aligned right
+                            { id: '1A', x: 350, y: 750, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '3A', x: 350, y: 510, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '5A', x: 350, y: 270, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '7A', x: 350, y: 150, width: 100, height: 120, area: 27, occupied: true },
+                            { id: '9A', x: 450, y: 150, width: 100, height: 120, area: 27, occupied: true },
+                            { id: '11A', x: 350, y: 30, width: 100, height: 120, area: 27, occupied: true },
+                            { id: '12A', x: 450, y: 30, width: 100, height: 120, area: 27, occupied: true }
+                        ],
+                        corridors: [
+                            { x: 250, y: 30, width: 100, height: 840, name: "КОРИДОР" }
+                        ]
+                    },
+                    2: {
+                        name: "КОРПУС А 2 этаж",
+                        rooms: [
+                            // Left side rooms - aligned left
+                            { id: '19A', x: 50, y: 390, width: 200, height: 120, area: 42, occupied: true, name: "ПРИЕМНАЯ" },
+                            { id: '20A', x: 50, y: 510, width: 200, height: 120, area: 42, occupied: true, name: "БУХГАЛТЕРИЯ" },
+                            { id: '23A', x: 50, y: 630, width: 200, height: 120, area: 42, occupied: false },
+                            { id: '25A', x: 50, y: 750, width: 200, height: 120, area: 42, occupied: true },
+                            { id: '14A', x: 50, y: 30, width: 200, height: 120, area: 42, occupied: true, name: "КОМНАТА ОТДЫХА" },
+                            { id: '16A', x: 50, y: 150, width: 100, height: 120, area: 25, occupied: true, name: "САНУЗЕЛ" },
+                            { id: '17A', x: 50, y: 270, width: 100, height: 120, area: 25, occupied: true, name: "КУХНЯ" },
+                            { id: '18A', x: 150, y: 270, width: 100, height: 120, area: 25, occupied: true, name: "САНУЗЕЛ" },
+                            
+                            // Right side rooms - aligned right
+                            { id: '13A', x: 350, y: 270, width: 200, height: 120, area: 40, occupied: true, name: "ЗАЛ СОВЕЩАНИЙ" },
+                            { id: '15A', x: 350, y: 150, width: 200, height: 120, area: 40, occupied: true },
+                            { id: '21A', x: 350, y: 510, width: 200, height: 120, area: 40, occupied: true },
+                            { id: '22A', x: 350, y: 630, width: 200, height: 120, area: 40, occupied: true },
+                            { id: '24A', x: 350, y: 750, width: 200, height: 120, area: 40, occupied: true }
+                        ],
+                        corridors: [
+                            { x: 250, y: 30, width: 100, height: 840, name: "КОРИДОР" }
+                        ]
+                    }
+                }
+            },
+            B: {
+                name: "КОРПУС Б",
+                floors: {
+                    1: {
+                        name: "КОРПУС Б 1 этаж",
+                        rooms: [
+                            // Left side rooms - aligned left
+                            { id: '0Б', x: 50, y: 750, width: 200, height: 120, area: 45, occupied: false },
+                            { id: '6Б', x: 50, y: 630, width: 200, height: 120, area: 54, occupied: true },
+                            { id: '8Б', x: 50, y: 510, width: 200, height: 120, area: 54, occupied: false },
+                            { id: '9Б', x: 50, y: 390, width: 200, height: 120, area: 54, occupied: true },
+                            { id: '10Б', x: 50, y: 270, width: 200, height: 120, area: 54, occupied: true },
+                            { id: '11Б', x: 50, y: 150, width: 200, height: 120, area: 54, occupied: true },
+                            
+                            // Right side rooms - aligned right
+                            { id: '1Б', x: 350, y: 750, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '2Б', x: 350, y: 630, width: 200, height: 120, area: 45, occupied: false },
+                            { id: '3Б', x: 350, y: 510, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '4Б', x: 350, y: 390, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '5Б', x: 350, y: 270, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '7Б', x: 350, y: 150, width: 200, height: 120, area: 42, occupied: true }
+                        ],
+                        corridors: [
+                            { x: 250, y: 30, width: 100, height: 840, name: "КОРИДОР" }
+                        ]
+                    },
+                    2: {
+                        name: "КОРПУС Б 2 этаж",
+                        rooms: [
+                            // Left side rooms - aligned left
+                            { id: '21Б', x: 50, y: 30, width: 200, height: 120, area: 54, occupied: true },
+                            { id: '23Б', x: 50, y: 150, width: 200, height: 120, area: 54, occupied: false },
+                            { id: '25Б', x: 50, y: 270, width: 200, height: 120, area: 54, occupied: true },
+                            { id: '27Б', x: 50, y: 390, width: 200, height: 120, area: 54, occupied: false },
+                            { id: '29Б', x: 50, y: 510, width: 200, height: 120, area: 54, occupied: true },
+                            
+                            // Right side rooms - aligned right
+                            { id: '20Б', x: 350, y: 30, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '22Б', x: 350, y: 150, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '24Б', x: 350, y: 270, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '26Б', x: 350, y: 390, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '28Б', x: 350, y: 510, width: 200, height: 120, area: 45, occupied: true },
+                            { id: '30Б', x: 350, y: 630, width: 200, height: 120, area: 45, occupied: true }
+                        ],
+                        corridors: [
+                            { x: 250, y: 30, width: 100, height: 720, name: "КОРИДОР" }
+                        ]
+                    }
+                }
+            }
+        };
+        
+        // Tenant data for all buildings
+        const tenants = [
+            // Building A, Floor 1
+            {
+                roomId: '1A',
+                name: 'ООО "ИнфоТех"',
+                businessType: 'IT-компания',
+                contact: {
+                    contactPerson: 'Иванов Иван',
+                    phone: '+7 (995) 123-4567',
+                    email: 'ivanov@infotech.ru'
+                },
+                contract: {
+                    startDate: '2024-01-15',
+                    endDate: '2026-01-14',
+                    rentPerSqm: 4.8,
+                    depositAmount: 6480
+                }
+            },
+            {
+                roomId: '2A',
+                name: 'Архитектурное Бюро "Проект"',
+                businessType: 'Архитектура',
+                contact: {
+                    contactPerson: 'Петрова Елена',
+                    phone: '+7 (995) 234-5678',
+                    email: 'petrova@project-arch.ru'
+                },
+                contract: {
+                    startDate: '2023-10-01',
+                    endDate: '2025-09-30',
+                    rentPerSqm: 4.5,
+                    depositAmount: 7290
+                }
+            },
+            {
+                roomId: '3A',
+                name: 'Юридическая фирма "Закон"',
+                businessType: 'Юридические услуги',
+                contact: {
+                    contactPerson: 'Сидоров Алексей',
+                    phone: '+7 (995) 345-6789',
+                    email: 'sidorov@zakon.ru'
+                },
+                contract: {
+                    startDate: '2024-03-01',
+                    endDate: '2027-02-28',
+                    rentPerSqm: 5.0,
+                    depositAmount: 6750
+                }
+            },
+            {
+                roomId: '5A',
+                name: 'Маркетинговое агентство "Креатив"',
+                businessType: 'Маркетинг',
+                contact: {
+                    contactPerson: 'Николаева Мария',
+                    phone: '+7 (995) 456-7890',
+                    email: 'nikolaeva@creative.ru'
+                },
+                contract: {
+                    startDate: '2023-08-15',
+                    endDate: '2025-08-14',
+                    rentPerSqm: 4.9,
+                    depositAmount: 6615
+                }
+            },
+            {
+                roomId: '0A',
+                name: 'Страховая компания "Гарант"',
+                businessType: 'Страхование',
+                contact: {
+                    contactPerson: 'Кузнецов Дмитрий',
+                    phone: '+7 (995) 567-8901',
+                    email: 'kuznetsov@garant.ru'
+                },
+                contract: {
+                    startDate: '2024-02-01',
+                    endDate: '2027-01-31',
+                    rentPerSqm: 4.7,
+                    depositAmount: 6345
+                }
+            },
+            {
+                roomId: '4A',
+                name: 'Дизайн-студия "Арт"',
+                businessType: 'Дизайн',
+                contact: {
+                    contactPerson: 'Смирнова Ольга',
+                    phone: '+7 (995) 678-9012',
+                    email: 'smirnova@art-design.ru'
+                },
+                contract: {
+                    startDate: '2023-11-01',
+                    endDate: '2025-10-31',
+                    rentPerSqm: 4.2,
+                    depositAmount: 5670
+                }
+            },
+            {
+                roomId: '6A',
+                name: 'Медицинский центр "Здоровье"',
+                businessType: 'Медицина',
+                contact: {
+                    contactPerson: 'Морозов Владимир',
+                    phone: '+7 (995) 789-0123',
+                    email: 'morozov@zdorovie.ru'
+                },
+                contract: {
+                    startDate: '2024-04-01',
+                    endDate: '2026-03-31',
+                    rentPerSqm: 4.6,
+                    depositAmount: 6210
+                }
+            },
+            {
+                roomId: '8A',
+                name: 'Туристическое агентство "Мир"',
+                businessType: 'Туризм',
+                contact: {
+                    contactPerson: 'Волкова Анна',
+                    phone: '+7 (995) 890-1234',
+                    email: 'volkova@mir-travel.ru'
+                },
+                contract: {
+                    startDate: '2023-09-15',
+                    endDate: '2025-09-14',
+                    rentPerSqm: 4.4,
+                    depositAmount: 5940
+                }
+            },
+            {
+                roomId: '7A',
+                name: 'Бухгалтерская фирма "Учет"',
+                businessType: 'Бухгалтерия',
+                contact: {
+                    contactPerson: 'Соколов Игорь',
+                    phone: '+7 (995) 901-2345',
+                    email: 'sokolov@uchet.ru'
+                },
+                contract: {
+                    startDate: '2024-01-01',
+                    endDate: '2026-12-31',
+                    rentPerSqm: 5.0,
+                    depositAmount: 4050
+                }
+            },
+            {
+                roomId: '9A',
+                name: 'Образовательный центр "Знание"',
+                businessType: 'Образование',
+                contact: {
+                    contactPerson: 'Лебедева Татьяна',
+                    phone: '+7 (995) 012-3456',
+                    email: 'lebedeva@znanie.ru'
+                },
+                contract: {
+                    startDate: '2023-07-01',
+                    endDate: '2025-06-30',
+                    rentPerSqm: 4.3,
+                    depositAmount: 3483
+                }
+            },
+            {
+                roomId: '11A',
+                name: 'Рекламное агентство "Идея"',
+                businessType: 'Реклама',
+                contact: {
+                    contactPerson: 'Козлов Артем',
+                    phone: '+7 (995) 123-4567',
+                    email: 'kozlov@idea-adv.ru'
+                },
+                contract: {
+                    startDate: '2024-03-15',
+                    endDate: '2026-03-14',
+                    rentPerSqm: 4.8,
+                    depositAmount: 3888
+                }
+            },
+            {
+                roomId: '12A',
+                name: 'Консалтинговая компания "Эксперт"',
+                businessType: 'Консалтинг',
+                contact: {
+                    contactPerson: 'Новикова Екатерина',
+                    phone: '+7 (995) 234-5678',
+                    email: 'novikova@expert.ru'
+                },
+                contract: {
+                    startDate: '2023-12-01',
+                    endDate: '2025-11-30',
+                    rentPerSqm: 4.7,
+                    depositAmount: 3807
+                }
+            },
+            
+            // Building A, Floor 2
+            {
+                roomId: '13A',
+                name: 'Зал совещаний',
+                businessType: 'Общие помещения',
+                contact: {
+                    contactPerson: 'Администрация',
+                    phone: '+7 (995) 000-0000',
+                    email: 'admin@office.ru'
+                },
+                contract: {
+                    startDate: '2023-01-01',
+                    endDate: '2028-01-01',
+                    rentPerSqm: 5.0,
+                    depositAmount: 6000
+                }
+            },
+            {
+                roomId: '14A',
+                name: 'Комната отдыха',
+                businessType: 'Общие помещения',
+                contact: {
+                    contactPerson: 'Администрация',
+                    phone: '+7 (995) 000-0000',
+                    email: 'admin@office.ru'
+                },
+                contract: {
+                    startDate: '2023-01-01',
+                    endDate: '2028-01-01',
+                    rentPerSqm: 4.5,
+                    depositAmount: 5670
+                }
+            },
+            {
+                roomId: '15A',
+                name: 'ООО "ТелекомСервис"',
+                businessType: 'Телекоммуникации',
+                contact: {
+                    contactPerson: 'Медведев Сергей',
+                    phone: '+7 (995) 345-6789',
+                    email: 'medvedev@telecom.ru'
+                },
+                contract: {
+                    startDate: '2024-02-01',
+                    endDate: '2026-01-31',
+                    rentPerSqm: 4.8,
+                    depositAmount: 5760
+                }
+            },
+            {
+                roomId: '19A',
+                name: 'Приемная директора',
+                businessType: 'Администрация',
+                contact: {
+                    contactPerson: 'Васильева Ирина',
+                    phone: '+7 (995) 456-7890',
+                    email: 'vasilyeva@office.ru'
+                },
+                contract: {
+                    startDate: '2023-06-01',
+                    endDate: '2025-05-31',
+                    rentPerSqm: 4.7,
+                    depositAmount: 5922
+                }
+            },
+            {
+                roomId: '20A',
+                name: 'Бухгалтерия',
+                businessType: 'Администрация',
+                contact: {
+                    contactPerson: 'Федорова Алла',
+                    phone: '+7 (995) 567-8901',
+                    email: 'fedorova@office.ru'
+                },
+                contract: {
+                    startDate: '2023-07-15',
+                    endDate: '2025-07-14',
+                    rentPerSqm: 4.6,
+                    depositAmount: 5796
+                }
+            },
+            {
+                roomId: '21A',
+                name: 'ООО "Финансовый консультант"',
+                businessType: 'Финансы',
+                contact: {
+                    contactPerson: 'Антонов Максим',
+                    phone: '+7 (995) 678-9012',
+                    email: 'antonov@finance.ru'
+                },
+                contract: {
+                    startDate: '2024-01-01',
+                    endDate: '2025-12-31',
+                    rentPerSqm: 4.9,
+                    depositAmount: 5880
+                }
+            },
+            {
+                roomId: '22A',
+                name: 'Кадровое агентство "Персонал"',
+                businessType: 'HR-услуги',
+                contact: {
+                    contactPerson: 'Григорьева Наталья',
+                    phone: '+7 (995) 789-0123',
+                    email: 'grigorieva@personnel.ru'
+                },
+                contract: {
+                    startDate: '2023-09-01',
+                    endDate: '2025-08-31',
+                    rentPerSqm: 4.5,
+                    depositAmount: 5400
+                }
+            },
+            {
+                roomId: '24A',
+                name: 'Юридическая консультация',
+                businessType: 'Юридические услуги',
+                contact: {
+                    contactPerson: 'Жуков Андрей',
+                    phone: '+7 (995) 890-1234',
+                    email: 'zhukov@legalconsult.ru'
+                },
+                contract: {
+                    startDate: '2024-02-15',
+                    endDate: '2026-02-14',
+                    rentPerSqm: 4.8,
+                    depositAmount: 5760
+                }
+            },
+            {
+                roomId: '25A',
+                name: 'Страховой брокер "Полис"',
+                businessType: 'Страхование',
+                contact: {
+                    contactPerson: 'Макарова Елена',
+                    phone: '+7 (995) 901-2345',
+                    email: 'makarova@polis.ru'
+                },
+                contract: {
+                    startDate: '2023-11-01',
+                    endDate: '2025-10-31',
+                    rentPerSqm: 4.7,
+                    depositAmount: 5922
+                }
+            },
+            
+            // Building B, Floor 1
+            {
+                roomId: '1Б',
+                name: 'ООО "СтройПроект"',
+                businessType: 'Строительство',
+                contact: {
+                    contactPerson: 'Карпов Дмитрий',
+                    phone: '+7 (995) 012-3456',
+                    email: 'karpov@stroyproject.ru'
+                },
+                contract: {
+                    startDate: '2024-03-01',
+                    endDate: '2026-02-28',
+                    rentPerSqm: 4.6,
+                    depositAmount: 6210
+                }
+            },
+            {
+                roomId: '3Б',
+                name: 'Транспортная компания "Логистика"',
+                businessType: 'Логистика',
+                contact: {
+                    contactPerson: 'Никитин Владимир',
+                    phone: '+7 (995) 123-4567',
+                    email: 'nikitin@logistics.ru'
+                },
+                contract: {
+                    startDate: '2023-10-15',
+                    endDate: '2025-10-14',
+                    rentPerSqm: 4.4,
+                    depositAmount: 5940
+                }
+            },
+            {
+                roomId: '4Б',
+                name: 'Издательство "Книга"',
+                businessType: 'Издательское дело',
+                contact: {
+                    contactPerson: 'Захарова Анна',
+                    phone: '+7 (995) 234-5678',
+                    email: 'zakharova@kniga.ru'
+                },
+                contract: {
+                    startDate: '2024-01-01',
+                    endDate: '2025-12-31',
+                    rentPerSqm: 4.5,
+                    depositAmount: 6075
+                }
+            },
+            {
+                roomId: '5Б',
+                name: 'Центр переводов "Лингва"',
+                businessType: 'Переводы',
+                contact: {
+                    contactPerson: 'Борисов Игорь',
+                    phone: '+7 (995) 345-6789',
+                    email: 'borisov@lingua.ru'
+                },
+                contract: {
+                    startDate: '2023-12-01',
+                    endDate: '2025-11-30',
+                    rentPerSqm: 4.7,
+                    depositAmount: 6345
+                }
+            },
+            {
+                roomId: '6Б',
+                name: 'Рекрутинговое агентство "Кадры"',
+                businessType: 'HR-услуги',
+                contact: {
+                    contactPerson: 'Романова Светлана',
+                    phone: '+7 (995) 456-7890',
+                    email: 'romanova@kadry.ru'
+                },
+                contract: {
+                    startDate: '2024-02-15',
+                    endDate: '2026-02-14',
+                    rentPerSqm: 4.8,
+                    depositAmount: 7776
+                }
+            },
+            {
+                roomId: '7Б',
+                name: 'Аудиторская фирма "Баланс"',
+                businessType: 'Аудит',
+                contact: {
+                    contactPerson: 'Кириллов Алексей',
+                    phone: '+7 (995) 567-8901',
+                    email: 'kirillov@balance.ru'
+                },
+                contract: {
+                    startDate: '2023-09-01',
+                    endDate: '2025-08-31',
+                    rentPerSqm: 4.9,
+                    depositAmount: 6174
+                }
+            },
+            {
+                roomId: '9Б',
+                name: 'ООО "ЭкоПродукт"',
+                businessType: 'Пищевая промышленность',
+                contact: {
+                    contactPerson: 'Степанов Андрей',
+                    phone: '+7 (995) 678-9012',
+                    email: 'stepanov@ecoproduct.ru'
+                },
+                contract: {
+                    startDate: '2024-01-15',
+                    endDate: '2026-01-14',
+                    rentPerSqm: 4.3,
+                    depositAmount: 6966
+                }
+            },
+            {
+                roomId: '10Б',
+                name: 'Инвестиционная компания "Капитал"',
+                businessType: 'Финансы',
+                contact: {
+                    contactPerson: 'Егоров Виктор',
+                    phone: '+7 (995) 789-0123',
+                    email: 'egorov@capital.ru'
+                },
+                contract: {
+                    startDate: '2023-11-15',
+                    endDate: '2025-11-14',
+                    rentPerSqm: 5.0,
+                    depositAmount: 8100
+                }
+            },
+            {
+                roomId: '11Б',
+                name: 'Туроператор "Планета"',
+                businessType: 'Туризм',
+                contact: {
+                    contactPerson: 'Павлова Мария',
+                    phone: '+7 (995) 890-1234',
+                    email: 'pavlova@planeta.ru'
+                },
+                contract: {
+                    startDate: '2024-03-01',
+                    endDate: '2026-02-28',
+                    rentPerSqm: 4.6,
+                    depositAmount: 7452
+                }
+            },
+            
+            // Building B, Floor 2
+            {
+                roomId: '20Б',
+                name: 'IT-компания "Кибер"',
+                businessType: 'IT-компания',
+                contact: {
+                    contactPerson: 'Семенов Дмитрий',
+                    phone: '+7 (995) 901-2345',
+                    email: 'semenov@cyber.ru'
+                },
+                contract: {
+                    startDate: '2023-10-01',
+                    endDate: '2025-09-30',
+                    rentPerSqm: 4.8,
+                    depositAmount: 6480
+                }
+            },
+            {
+                roomId: '21Б',
+                name: 'Веб-студия "Дизайн"',
+                businessType: 'Дизайн',
+                contact: {
+                    contactPerson: 'Ковалева Анастасия',
+                    phone: '+7 (995) 012-3456',
+                    email: 'kovaleva@design.ru'
+                },
+                contract: {
+                    startDate: '2024-01-01',
+                    endDate: '2025-12-31',
+                    rentPerSqm: 4.7,
+                    depositAmount: 7614
+                }
+            },
+            {
+                roomId: '22Б',
+                name: 'Консалтинговая компания "Стратегия"',
+                businessType: 'Консалтинг',
+                contact: {
+                    contactPerson: 'Громов Александр',
+                    phone: '+7 (995) 123-4567',
+                    email: 'gromov@strategy.ru'
+                },
+                contract: {
+                    startDate: '2023-11-15',
+                    endDate: '2025-11-14',
+                    rentPerSqm: 4.9,
+                    depositAmount: 6615
+                }
+            },
+            {
+                roomId: '24Б',
+                name: 'Рекламное агентство "Медиа"',
+                businessType: 'Реклама',
+                contact: {
+                    contactPerson: 'Фролова Екатерина',
+                    phone: '+7 (995) 234-5678',
+                    email: 'frolova@media.ru'
+                },
+                contract: {
+                    startDate: '2024-02-01',
+                    endDate: '2026-01-31',
+                    rentPerSqm: 4.6,
+                    depositAmount: 6210
+                }
+            },
+            {
+                roomId: '25Б',
+                name: 'Учебный центр "Профессионал"',
+                businessType: 'Образование',
+                contact: {
+                    contactPerson: 'Трофимов Сергей',
+                    phone: '+7 (995) 345-6789',
+                    email: 'trofimov@professional.ru'
+                },
+                contract: {
+                    startDate: '2023-09-01',
+                    endDate: '2025-08-31',
+                    rentPerSqm: 4.5,
+                    depositAmount: 7290
+                }
+            },
+            {
+                roomId: '26Б',
+                name: 'Юридическая компания "Право"',
+                businessType: 'Юридические услуги',
+                contact: {
+                    contactPerson: 'Архипова Наталья',
+                    phone: '+7 (995) 456-7890',
+                    email: 'arkhipova@pravo.ru'
+                },
+                contract: {
+                    startDate: '2024-03-15',
+                    endDate: '2026-03-14',
+                    rentPerSqm: 4.8,
+                    depositAmount: 6480
+                }
+            },
+            {
+                roomId: '28Б',
+                name: 'Финансовая компания "Капитал"',
+                businessType: 'Финансы',
+                contact: {
+                    contactPerson: 'Лазарев Игорь',
+                    phone: '+7 (995) 567-8901',
+                    email: 'lazarev@capital.ru'
+                },
+                contract: {
+                    startDate: '2023-10-15',
+                    endDate: '2025-10-14',
+                    rentPerSqm: 5.0,
+                    depositAmount: 6750
+                }
+            },
+            {
+                roomId: '29Б',
+                name: 'Бухгалтерская фирма "Отчет"',
+                businessType: 'Бухгалтерия',
+                contact: {
+                    contactPerson: 'Одинцова Елена',
+                    phone: '+7 (995) 678-9012',
+                    email: 'odintsova@otchet.ru'
+                },
+                contract: {
+                    startDate: '2024-01-15',
+                    endDate: '2026-01-14',
+                    rentPerSqm: 4.7,
+                    depositAmount: 7614
+                }
+            },
+            {
+                roomId: '30Б',
+                name: 'Архитектурное бюро "Город"',
+                businessType: 'Архитектура',
+                contact: {
+                    contactPerson: 'Филиппов Дмитрий',
+                    phone: '+7 (995) 789-0123',
+                    email: 'filippov@gorod.ru'
+                },
+                contract: {
+                    startDate: '2023-12-01',
+                    endDate: '2025-11-30',
+                    rentPerSqm: 4.8,
+                    depositAmount: 6480
+                }
+            }
+        ];
+        
+        // Utility functions
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ru-RU', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+        
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ru-RU', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2
+            }).format(amount);
+        }
+        
+        function calculateContractDuration(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const diffMonths = (end.getFullYear() - start.getFullYear()) * 12 + 
+                               (end.getMonth() - start.getMonth());
+            return diffMonths;
+        }
+        
+        function getTenantByRoomId(roomId) {
+            return tenants.find(tenant => tenant.roomId === roomId);
+        }
+        
+        // Metrics and color scales
+        const metrics = {
+            rentPerSqm: {
+                title: 'Аренда за м²',
+                getValueForRoom: (roomId) => {
+                    const tenant = getTenantByRoomId(roomId);
+                    return tenant ? tenant.contract.rentPerSqm : 0;
+                },
+                formatValue: (value) => `$${value.toFixed(2)}/м²`,
+                colorScale: [
+                    { value: 0, color: '#9ca3af' }, // Vacant
+                    { value: 4.0, color: '#93c5fd' }, // Low
+                    { value: 4.5, color: '#34d399' }, // Medium
+                    { value: 4.8, color: '#fbbf24' }, // High
+                    { value: 5.0, color: '#f87171' }  // Very high
+                ],
+                legendTitle: 'Аренда за квадратный метр'
+            },
+            totalRent: {
+                title: 'Общая аренда',
+                getValueForRoom: (roomId) => {
+                    const tenant = getTenantByRoomId(roomId);
+                    const room = getRoomById(roomId);
+                    return tenant && room ? tenant.contract.rentPerSqm * room.area : 0;
+                },
+                formatValue: (value) => formatCurrency(value),
+                colorScale: [
+                    { value: 0, color: '#9ca3af' }, // Vacant
+                    { value: 150, color: '#93c5fd' }, // Low
+                    { value: 200, color: '#34d399' }, // Medium
+                    { value: 250, color: '#fbbf24' }, // High
+                    { value: 300, color: '#f87171' }  // Very high
+                ],
+                legendTitle: 'Ежемесячная аренда'
+            },
+            occupancyStatus: {
+                title: 'Статус занятости',
+                getValueForRoom: (roomId) => {
+                    const room = getRoomById(roomId);
+                    return room && room.occupied ? 1 : 0;
+                },
+                formatValue: (value) => value === 1 ? 'Занято' : 'Свободно',
+                colorScale: [
+                    { value: 0, color: '#9ca3af' }, // Vacant
+                    { value: 1, color: '#34d399' }  // Occupied
+                ],
+                legendTitle: 'Статус занятости'
+            },
+            contractDuration: {
+                title: 'Срок контракта',
+                getValueForRoom: (roomId) => {
+                    const tenant = getTenantByRoomId(roomId);
+                    return tenant ? calculateContractDuration(tenant.contract.startDate, tenant.contract.endDate) : 0;
+                },
+                formatValue: (value) => value === 0 ? 'Нет контракта' : `${value} месяцев`,
+                colorScale: [
+                    { value: 0, color: '#9ca3af' }, // Vacant
+                    { value: 12, color: '#93c5fd' }, // 1 year
+                    { value: 24, color: '#34d399' }, // 2 years
+                    { value: 36, color: '#fbbf24' }, // 3 years
+                    { value: 48, color: '#f87171' }  // 4+ years
+                ],
+                legendTitle: 'Срок контракта'
+            },
+            depositAmount: {
+                title: 'Сумма депозита',
+                getValueForRoom: (roomId) => {
+                    const tenant = getTenantByRoomId(roomId);
+                    return tenant ? tenant.contract.depositAmount : 0;
+                },
+                formatValue: (value) => formatCurrency(value),
+                colorScale: [
+                    { value: 0, color: '#9ca3af' }, // Vacant
+                    { value: 4000, color: '#93c5fd' }, // Low
+                    { value: 5000, color: '#34d399' }, // Medium
+                    { value: 6000, color: '#fbbf24' }, // High
+                    { value: 7000, color: '#f87171' }  // Very high
+                ],
+                legendTitle: 'Сумма депозита'
+            },
+            businessType: {
+                title: 'Тип бизнеса',
+                getValueForRoom: (roomId) => {
+                    const tenant = getTenantByRoomId(roomId);
+                    return tenant ? tenant.businessType : 'Свободно';
+                },
+                formatValue: (value) => value,
+                colorScale: [
+                    { value: 'Свободно', color: '#9ca3af' },
+                    { value: 'IT-компания', color: '#60a5fa' },
+                    { value: 'Архитектура', color: '#c084fc' },
+                    { value: 'Юридические услуги', color: '#34d399' },
+                    { value: 'Маркетинг', color: '#f97316' },
+                    { value: 'Страхование', color: '#f43f5e' },
+                    { value: 'Дизайн', color: '#14b8a6' },
+                    { value: 'Медицина', color: '#374151' },
+                    { value: 'Туризм', color: '#fbbf24' },
+                    { value: 'Бухгалтерия', color: '#b45309' },
+                    { value: 'Образование', color: '#059669' },
+                    { value: 'Реклама', color: '#8b5cf6' },
+                    { value: 'Консалтинг', color: '#0ea5e9' },
+                    { value: 'Финансы', color: '#b91c1c' },
+                    { value: 'Общие помещения', color: '#6b7280' },
+                    { value: 'Администрация', color: '#10b981' },
+                    { value: 'HR-услуги', color: '#f59e0b' },
+                    { value: 'Аудит', color: '#1e293b' },
+                    { value: 'Пищевая промышленность', color: '#15803d' },
+                    { value: 'Переводы', color: '#3b82f6' },
+                    { value: 'Издательское дело', color: '#a855f7' },
+                    { value: 'Логистика', color: '#22c55e' },
+                    { value: 'Строительство', color: '#ea580c' }
+                ],
+                legendTitle: 'Типы бизнеса'
+            }
+        };
+
+        // Get the current state (selected building and floor)
+        let currentState = {
+            building: 'A',
+            floor: '1',
+            metric: 'rentPerSqm'
+        };
+        
+        // Helper function to get room by ID
+        function getRoomById(roomId) {
+            for (const buildingKey in buildings) {
+                const building = buildings[buildingKey];
+                for (const floorKey in building.floors) {
+                    const floor = building.floors[floorKey];
+                    const room = floor.rooms.find(r => r.id === roomId);
+                    if (room) {
+                        return room;
+                    }
+                }
+            }
+            return null;
+        }
+        
+        // Create the floor plans using D3.js
+        function createFloorPlans() {
+            for (const buildingKey in buildings) {
+                const building = buildings[buildingKey];
+                for (const floorKey in building.floors) {
+                    const floor = building.floors[floorKey];
+                    createFloorPlan(buildingKey, floorKey, floor);
+                }
+            }
+        }
+        
+        function createFloorPlan(buildingKey, floorKey, floor) {
+            const width = 600;
+            const height = 900;
+            const margin = { top: 20, right: 20, bottom: 20, left: 20 };
+            
+            // Create SVG
+            const svg = d3.select(`#floorplan-${buildingKey}${floorKey}`)
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("viewBox", `0 0 ${width} ${height}`)
+                .attr("preserveAspectRatio", "xMidYMid meet")
+                .attr("class", "floor-plan");
+            
+            // Create the outer walls
+            svg.append("rect")
+                .attr("x", margin.left)
+                .attr("y", margin.top)
+                .attr("width", width - margin.left - margin.right)
+                .attr("height", height - margin.top - margin.bottom)
+                .attr("fill", "none")
+                .attr("stroke", "#333")
+                .attr("stroke-width", 4);
+                
+            // Add corridors
+            floor.corridors.forEach(corridor => {
+                svg.append("rect")
+                    .attr("class", "corridor")
+                    .attr("x", corridor.x)
+                    .attr("y", corridor.y)
+                    .attr("width", corridor.width)
+                    .attr("height", corridor.height)
+                    .attr("fill", "#f9f9f9")
+                    .attr("stroke", "#333")
+                    .attr("stroke-width", 1)
+                    .attr("stroke-dasharray", "5,5")
+                    .attr("opacity", 0.5);
+                
+                // Add corridor label
+                svg.append("text")
+                    .attr("x", corridor.x + corridor.width / 2)
+                    .attr("y", corridor.y + 100)
+                    .attr("text-anchor", "middle")
+                    .attr("font-size", "12px")
+                    .attr("font-weight", "bold")
+                    .text(corridor.name || "КОРИДОР");
+            });
+            
+            // Add rooms
+            const roomGroups = svg.selectAll(".room-group")
+                .data(floor.rooms)
+                .enter()
+                .append("g")
+                .attr("class", "room-group");
+            
+            // Room rectangles
+            roomGroups.append("rect")
+                .attr("class", "room")
+                .attr("id", d => `${d.id.replace(/[^a-zA-Z0-9]/g, '_')}_${buildingKey}${floorKey}`)
+                .attr("x", d => d.x)
+                .attr("y", d => d.y)
+                .attr("width", d => d.width)
+                .attr("height", d => d.height)
+                .attr("data-room-id", d => d.id)
+                .attr("data-occupied", d => d.occupied)
+                .attr("stroke", "#333")
+                .attr("stroke-width", 1)
+                .attr("fill", d => d.occupied ? "#93c5fd" : "#9ca3af");
+            
+            // Room labels
+            roomGroups.append("text")
+                .attr("class", "room-label")
+                .attr("x", d => d.x + d.width / 2)
+                .attr("y", d => d.y + d.height / 2)
+                .text(d => d.id);
+            
+            // Room area labels
+            roomGroups.append("text")
+                .attr("class", "room-area")
+                .attr("x", d => d.x + d.width / 2)
+                .attr("y", d => d.y + d.height / 2 + 20)
+                .text(d => `${d.area} м²`);
+                
+            // Room name labels if available
+            roomGroups.filter(d => d.name)
+                .append("text")
+                .attr("class", "room-name")
+                .attr("x", d => d.x + d.width / 2)
+                .attr("y", d => d.y + d.height / 2 - 20)
+                .text(d => d.name);
+            
+            // Add doors for each room
+            floor.rooms.forEach(room => {
+                // Door position depends on the room's position
+                const x = room.x;
+                const y = room.y;
+                const width = room.width;
+                const height = room.height;
+                
+                // Position doors based on room location
+                if (x < 300) {
+                    // Left side rooms, door on right (to corridor)
+                    svg.append("rect")
+                        .attr("x", x + width)
+                        .attr("y", y + height / 2 - 10)
+                        .attr("width", 5)
+                        .attr("height", 20)
+                        .attr("fill", "#333");
+                } else {
+                    // Right side rooms, door on left (to corridor)
+                    svg.append("rect")
+                        .attr("x", x - 5)
+                        .attr("y", y + height / 2 - 10)
+                        .attr("width", 5)
+                        .attr("height", 20)
+                        .attr("fill", "#333");
+                }
+            });
+        }
+        
+        // Update room colors based on selected metric
+        function updateMetricColors(metricName) {
+            const metric = metrics[metricName];
+            const currentBuilding = currentState.building;
+            const currentFloor = currentState.floor;
+            
+            d3.select(`#floorplan-${currentBuilding}${currentFloor}`).selectAll(".room").each(function() {
+                const room = d3.select(this);
+                const roomId = room.attr("data-room-id");
+                const value = metric.getValueForRoom(roomId);
+                
+                // Find the color for this value
+                let color;
+                if (metricName === 'businessType') {
+                    // For business type, exact match
+                    const colorItem = metric.colorScale.find(item => item.value === value);
+                    color = colorItem ? colorItem.color : '#9ca3af';
+                } else {
+                    // For numerical metrics, find appropriate range
+                    if (value === 0) {
+                        color = metric.colorScale[0].color; // Vacant color
+                    } else {
+                        // Find the highest threshold that is less than or equal to the value
+                        let colorItem = metric.colorScale[1]; // Start with first non-vacant color
+                        
+                        for (let i = 2; i < metric.colorScale.length; i++) {
+                            if (value >= metric.colorScale[i].value) {
+                                colorItem = metric.colorScale[i];
+                            }
+                        }
+                        
+                        color = colorItem.color;
+                    }
+                }
+                
+                // Apply the color with animation
+                room.transition().duration(500).attr("fill", color);
+            });
+        }
+        
+        // Update the legend based on selected metric
+        function updateLegend(metricName) {
+            const metric = metrics[metricName];
+            const legendContainer = document.getElementById('legend-items');
+            legendContainer.innerHTML = '';
+            
+            const legendTitle = document.createElement('div');
+            legendTitle.textContent = metric.legendTitle;
+            legendTitle.style.fontWeight = 'bold';
+            legendTitle.style.marginBottom = '8px';
+            legendContainer.appendChild(legendTitle);
+            
+            metric.colorScale.forEach(item => {
+                const legendItem = document.createElement('div');
+                legendItem.className = 'legend-item';
+                
+                const colorBox = document.createElement('div');
+                colorBox.className = 'color-box';
+                colorBox.style.backgroundColor = item.color;
+                
+                const label = document.createElement('span');
+                
+                if (metricName === 'businessType') {
+                    label.textContent = item.value;
+                } else if (metricName === 'occupancyStatus') {
+                    label.textContent = item.value === 0 ? 'Свободно' : 'Занято';
+                } else {
+                    // For numerical metrics
+                    if (item.value === 0) {
+                        label.textContent = 'Свободно';
+                    } else {
+                        const nextIndex = metric.colorScale.indexOf(item) + 1;
+                        if (nextIndex < metric.colorScale.length) {
+                            const nextValue = metric.colorScale[nextIndex].value;
+                            label.textContent = `${metric.formatValue(item.value)} - ${metric.formatValue(nextValue)}`;
+                        } else {
+                            label.textContent = `${metric.formatValue(item.value)}+`;
+                        }
+                    }
+                }
+                
+                legendItem.appendChild(colorBox);
+                legendItem.appendChild(label);
+                legendContainer.appendChild(legendItem);
+                
+                // Make legend items clickable to filter
+                legendItem.addEventListener('click', () => {
+                    showLegendSummary(metricName, item.value);
+                });
+            });
+        }
+        
+        // Get current floor rooms
+        function getCurrentFloorRooms() {
+            return buildings[currentState.building].floors[currentState.floor].rooms;
+        }
+        
+        // Show summary for a specific legend item
+        function showLegendSummary(metricName, value) {
+            const metric = metrics[metricName];
+            const currentRooms = getCurrentFloorRooms();
+            let matchingRooms = [];
+            
+            if (metricName === 'businessType') {
+                // For business type, exact match
+                matchingRooms = currentRooms.filter(room => {
+                    const roomValue = metric.getValueForRoom(room.id);
+                    return roomValue === value;
+                });
+            } else if (metricName === 'occupancyStatus') {
+                // For occupancy status
+                const isOccupied = value === 1;
+                matchingRooms = currentRooms.filter(room => room.occupied === isOccupied);
+            } else {
+                // For numerical metrics
+                const valueIndex = metric.colorScale.findIndex(item => item.value === value);
+                
+                if (valueIndex === 0) {
+                    // Vacant rooms
+                    matchingRooms = currentRooms.filter(room => !room.occupied);
+                } else {
+                    const minValue = value;
+                    const maxValue = valueIndex < metric.colorScale.length - 1 
+                                    ? metric.colorScale[valueIndex + 1].value 
+                                    : Infinity;
+                    
+                    matchingRooms = currentRooms.filter(room => {
+                        const roomValue = metric.getValueForRoom(room.id);
+                        return roomValue >= minValue && roomValue < maxValue;
+                    });
+                }
+            }
+            
+            // Highlight matching rooms
+            d3.select(`#floorplan-${currentState.building}${currentState.floor}`).selectAll(".room").each(function() {
+                const room = d3.select(this);
+                const roomId = room.attr("data-room-id");
+                const isMatching = matchingRooms.some(r => r.id === roomId);
+                
+                if (isMatching) {
+                    room.style("opacity", "1")
+                        .attr("stroke-width", 3)
+                        .attr("stroke", "#2563eb");
+                } else {
+                    room.style("opacity", "0.4")
+                        .attr("stroke-width", 1)
+                        .attr("stroke", "#333");
+                }
+            });
+            
+            // Show summary for these rooms
+            if (matchingRooms.length > 0) {
+                const totalArea = matchingRooms.reduce((sum, room) => sum + room.area, 0);
+                const occupiedRooms = matchingRooms.filter(room => room.occupied);
+                const occupiedArea = occupiedRooms.reduce((sum, room) => sum + room.area, 0);
+                const occupancyRate = matchingRooms.length > 0 ? (occupiedRooms.length / matchingRooms.length) * 100 : 0;
+                
+                let totalRevenue = 0;
+                occupiedRooms.forEach(room => {
+                    const tenant = getTenantByRoomId(room.id);
+                    if (tenant) {
+                        totalRevenue += tenant.contract.rentPerSqm * room.area;
+                    }
+                });
+                
+                const avgRentPerSqm = occupiedArea > 0 ? totalRevenue / occupiedArea : 0;
+                
+                // Display the filtered summary
+                document.getElementById('total-area').textContent = `${totalArea.toFixed(1)} м²`;
+                document.getElementById('occupied-area').textContent = `${occupiedArea.toFixed(1)} м²`;
+                document.getElementById('occupancy-rate').textContent = `${occupancyRate.toFixed(1)}%`;
+                document.getElementById('monthly-revenue').textContent = formatCurrency(totalRevenue);
+                document.getElementById('avg-rent').textContent = `${formatCurrency(avgRentPerSqm)}/м²`;
+                
+                // Show alert with info
+                let title = '';
+                if (metricName === 'businessType') {
+                    title = `${value}`;
+                } else if (metricName === 'occupancyStatus') {
+                    title = value === 1 ? 'Занятые помещения' : 'Свободные помещения';
+                } else {
+                    const nextIndex = metric.colorScale.indexOf(metric.colorScale.find(item => item.value === value)) + 1;
+                    if (nextIndex < metric.colorScale.length && value !== 0) {
+                        const nextValue = metric.colorScale[nextIndex].value;
+                        title = `${metric.formatValue(value)} - ${metric.formatValue(nextValue)}`;
+                    } else if (value === 0) {
+                        title = 'Свободные помещения';
+                    } else {
+                        title = `${metric.formatValue(value)}+`;
+                    }
+                }
+                
+                alert(`${title}\n\nПомещения: ${matchingRooms.map(r => r.id).join(', ')}\nОбщая площадь: ${totalArea.toFixed(1)} м²\nЗанятость: ${occupancyRate.toFixed(1)}%\nЕжемесячный доход: ${formatCurrency(totalRevenue)}`);
+            }
+            
+            // Add a timeout to reset highlighting
+            setTimeout(() => {
+                d3.select(`#floorplan-${currentState.building}${currentState.floor}`).selectAll(".room")
+                    .style("opacity", "1")
+                    .attr("stroke-width", 1)
+                    .attr("stroke", "#333");
+                
+                updateSummary(); // Reset to overall summary
+            }, 5000);
+        }
+        
+        // Update summary statistics
+        function updateSummary() {
+            const currentRooms = getCurrentFloorRooms();
+            const totalArea = currentRooms.reduce((sum, room) => sum + room.area, 0);
+            const occupiedRooms = currentRooms.filter(room => room.occupied);
+            const occupiedArea = occupiedRooms.reduce((sum, room) => sum + room.area, 0);
+            const occupancyRate = (occupiedRooms.length / currentRooms.length) * 100;
+            
+            let totalRevenue = 0;
+            occupiedRooms.forEach(room => {
+                const tenant = getTenantByRoomId(room.id);
+                if (tenant) {
+                    totalRevenue += tenant.contract.rentPerSqm * room.area;
+                }
+            });
+            
+            const avgRentPerSqm = occupiedArea > 0 ? totalRevenue / occupiedArea : 0;
+            
+            document.getElementById('total-area').textContent = `${totalArea.toFixed(1)} м²`;
+            document.getElementById('occupied-area').textContent = `${occupiedArea.toFixed(1)} м²`;
+            document.getElementById('occupancy-rate').textContent = `${occupancyRate.toFixed(1)}%`;
+            document.getElementById('monthly-revenue').textContent = formatCurrency(totalRevenue);
+            document.getElementById('avg-rent').textContent = `${formatCurrency(avgRentPerSqm)}/м²`;
+        }
+        
+        // Show tenant details for a room
+        function showTenantDetails(roomId) {
+            const room = getRoomById(roomId);
+            const tenant = getTenantByRoomId(roomId);
+            const detailPanel = document.querySelector('.detail-panel');
+            const tenantDetailsContainer = document.getElementById('tenant-details');
+            
+            tenantDetailsContainer.innerHTML = '';
+            
+            if (tenant) {
+                // Room is occupied, show tenant details
+                const monthlyRent = tenant.contract.rentPerSqm * room.area;
+                const contractDuration = calculateContractDuration(tenant.contract.startDate, tenant.contract.endDate);
+                
+                // Header section
+                const header = document.createElement('div');
+                header.className = 'tenant-header';
+                
+                const roomIdElement = document.createElement('div');
+                roomIdElement.className = 'room-id';
+                roomIdElement.textContent = `Помещение ${room.id}`;
+                
+                const tenantName = document.createElement('div');
+                tenantName.className = 'tenant-name';
+                tenantName.textContent = tenant.name;
+                
+                const businessType = document.createElement('div');
+                businessType.className = 'business-type';
+                businessType.textContent = tenant.businessType;
+                
+                header.appendChild(roomIdElement);
+                header.appendChild(tenantName);
+                header.appendChild(businessType);
+                
+                // Space details
+                const spaceSection = document.createElement('div');
+                spaceSection.className = 'detail-section';
+                
+                const spaceTitle = document.createElement('h4');
+                spaceTitle.textContent = 'Информация о помещении';
+                spaceSection.appendChild(spaceTitle);
+                
+                const spaceGrid = document.createElement('div');
+                spaceGrid.className = 'detail-grid';
+                
+                // Add space details
+                addDetailItem(spaceGrid, 'Площадь', `${room.area} м²`);
+                addDetailItem(spaceGrid, 'Стоимость за м²', `$${tenant.contract.rentPerSqm.toFixed(2)}`);
+                addDetailItem(spaceGrid, 'Ежемесячная аренда', formatCurrency(monthlyRent));
+                addDetailItem(spaceGrid, 'Годовая аренда', formatCurrency(monthlyRent * 12));
+                
+                spaceSection.appendChild(spaceGrid);
+                
+                // Contract details
+                const contractSection = document.createElement('div');
+                contractSection.className = 'detail-section';
+                
+                const contractTitle = document.createElement('h4');
+                contractTitle.textContent = 'Информация о контракте';
+                contractSection.appendChild(contractTitle);
+                
+                const contractGrid = document.createElement('div');
+                contractGrid.className = 'detail-grid';
+                
+                // Add contract details
+                addDetailItem(contractGrid, 'Дата начала', formatDate(tenant.contract.startDate));
+                addDetailItem(contractGrid, 'Дата окончания', formatDate(tenant.contract.endDate));
+                addDetailItem(contractGrid, 'Срок контракта', `${contractDuration} месяцев`);
+                addDetailItem(contractGrid, 'Депозит', formatCurrency(tenant.contract.depositAmount));
+                
+                contractSection.appendChild(contractGrid);
+                
+                // Contact details
+                const contactSection = document.createElement('div');
+                contactSection.className = 'detail-section';
+                
+                const contactTitle = document.createElement('h4');
+                contactTitle.textContent = 'Контактная информация';
+                contactSection.appendChild(contactTitle);
+                
+                const contactItems = document.createElement('div');
+                contactItems.className = 'contact-section';
+                
+                // Contact person
+                const contactPerson = document.createElement('div');
+                contactPerson.className = 'contact-item';
+                contactPerson.innerHTML = `<svg class="contact-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`;
+                contactPerson.innerHTML += `<span>${tenant.contact.contactPerson}</span>`;
+                
+                // Phone
+                const phone = document.createElement('div');
+                phone.className = 'contact-item';
+                phone.innerHTML = `<svg class="contact-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>`;
+                phone.innerHTML += `<span>${tenant.contact.phone}</span>`;
+                
+                // Email
+                const email = document.createElement('div');
+                email.className = 'contact-item';
+                email.innerHTML = `<svg class="contact-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>`;
+                email.innerHTML += `<span>${tenant.contact.email}</span>`;
+                
+                contactItems.appendChild(contactPerson);
+                contactItems.appendChild(phone);
+                contactItems.appendChild(email);
+                contactSection.appendChild(contactItems);
+                
+                // Add all sections to the container
+                tenantDetailsContainer.appendChild(header);
+                tenantDetailsContainer.appendChild(spaceSection);
+                tenantDetailsContainer.appendChild(contractSection);
+                tenantDetailsContainer.appendChild(contactSection);
+            } else {
+                // Room is vacant
+                const vacantMessage = document.createElement('div');
+                vacantMessage.className = 'vacant-message';
+                
+                const vacantIcon = document.createElement('div');
+                vacantIcon.className = 'vacant-icon';
+                vacantIcon.innerHTML = '🏢';
+                
+                const message = document.createElement('h3');
+                message.textContent = `Помещение ${room.id} свободно`;
+                
+                const subMessage = document.createElement('p');
+                subMessage.textContent = `${room.area} м² доступно для аренды`;
+                
+                vacantMessage.appendChild(vacantIcon);
+                vacantMessage.appendChild(message);
+                vacantMessage.appendChild(subMessage);
+                
+                tenantDetailsContainer.appendChild(vacantMessage);
+            }
+            
+            // Show the panel with animation
+            detailPanel.classList.add('active');
+            setTimeout(() => {
+                tenantDetailsContainer.classList.add('animate-in');
+            }, 100);
+        }
+        
+        // Helper function to add detail items
+        function addDetailItem(container, label, value) {
+            const item = document.createElement('div');
+            item.className = 'detail-item';
+            
+            const labelElement = document.createElement('div');
+            labelElement.className = 'detail-label';
+            labelElement.textContent = label;
+            
+            const valueElement = document.createElement('div');
+            valueElement.className = 'detail-value';
+            valueElement.textContent = value;
+            
+            item.appendChild(labelElement);
+            item.appendChild(valueElement);
+            container.appendChild(item);
+        }
+        
+        // Show tooltip for room
+        function showTooltip(event, roomId) {
+            const tooltip = document.getElementById('tooltip');
+            const room = getRoomById(roomId);
+            const tenant = getTenantByRoomId(roomId);
+            
+            if (room) {
+                let tooltipContent = `<strong>Помещение ${room.id}</strong><br>Площадь: ${room.area} м²<br>`;
+                
+                if (tenant) {
+                    const monthlyRent = tenant.contract.rentPerSqm * room.area;
+                    tooltipContent += `Арендатор: ${tenant.name}<br>`;
+                    tooltipContent += `Аренда: ${formatCurrency(monthlyRent)}/месяц<br>`;
+                    tooltipContent += `($${tenant.contract.rentPerSqm.toFixed(2)}/м²)`;
+                } else {
+                    tooltipContent += `<em>Свободно</em>`;
+                }
+                
+                tooltip.innerHTML = tooltipContent;
+                tooltip.style.opacity = '1';
+                
+                moveTooltip(event);
+            }
+        }
+        
+        function moveTooltip(event) {
+            const tooltip = document.getElementById('tooltip');
+            const padding = 15;
+            
+            // Position the tooltip near the cursor but not directly under it
+            const x = event.clientX + padding;
+            const y = event.clientY + padding;
+            
+            // Check if tooltip would go off screen
+            const tooltipWidth = tooltip.offsetWidth;
+            const tooltipHeight = tooltip.offsetHeight;
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            let posX = x;
+            let posY = y;
+            
+            if (x + tooltipWidth > windowWidth) {
+                posX = x - tooltipWidth - padding * 2;
+            }
+            
+            if (y + tooltipHeight > windowHeight) {
+                posY = y - tooltipHeight - padding * 2;
+            }
+            
+            tooltip.style.left = `${posX}px`;
+            tooltip.style.top = `${posY}px`;
+        }
+        
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.style.opacity = '0';
+        }
+        
+        // Change floor plan
+        function changeFloorPlan(building, floor) {
+            // Update current state
+            currentState.building = building;
+            currentState.floor = floor;
+            
+            // Update floor title
+            document.getElementById('current-floor-title').textContent = buildings[building].floors[floor].name;
+            
+            // Hide all floor plans
+            document.querySelectorAll('.floor-plan-svg').forEach(element => {
+                element.classList.remove('active');
+            });
+            
+            // Show the selected floor plan
+            document.getElementById(`floorplan-${building}${floor}`).classList.add('active');
+            
+            // Update metrics and summary
+            updateMetricColors(currentState.metric);
+            updateSummary();
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Building tabs
+            document.querySelectorAll('.building-tab').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all building tabs
+                    document.querySelectorAll('.building-tab').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked tab
+                    button.classList.add('active');
+                    
+                    // Change floor plan
+                    const building = button.getAttribute('data-building');
+                    changeFloorPlan(building, currentState.floor);
+                });
+            });
+            
+            // Floor tabs
+            document.querySelectorAll('.floor-tab').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all floor tabs
+                    document.querySelectorAll('.floor-tab').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked tab
+                    button.classList.add('active');
+                    
+                    // Change floor plan
+                    const floor = button.getAttribute('data-floor');
+                    changeFloorPlan(currentState.building, floor);
+                });
+            });
+            
+            // Metric buttons
+            document.querySelectorAll('.metric-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('.metric-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    // Update colors and legend
+                    const metricName = button.getAttribute('data-metric');
+                    currentState.metric = metricName;
+                    updateMetricColors(metricName);
+                    updateLegend(metricName);
+                });
+            });
+            
+            // Room click event - needs to be set for each floor plan
+            for (const buildingKey in buildings) {
+                const building = buildings[buildingKey];
+                for (const floorKey in building.floors) {
+                    d3.select(`#floorplan-${buildingKey}${floorKey}`).selectAll('.room')
+                        .on('click', function() {
+                            const roomId = d3.select(this).attr('data-room-id');
+                            showTenantDetails(roomId);
+                        })
+                        .on('mouseenter', function(event) {
+                            const roomId = d3.select(this).attr('data-room-id');
+                            showTooltip(event, roomId);
+                        })
+                        .on('mousemove', function(event) {
+                            moveTooltip(event);
+                        })
+                        .on('mouseleave', function() {
+                            hideTooltip();
+                        });
+                }
+            }
+            
+            // Close detail panel
+            document.getElementById('close-details').addEventListener('click', () => {
+                const detailPanel = document.querySelector('.detail-panel');
+                const tenantDetailsContainer = document.getElementById('tenant-details');
+                
+                tenantDetailsContainer.classList.remove('animate-in');
+                detailPanel.classList.remove('active');
+            });
+        }
+        
+        // Initialize the application
+        function initApp() {
+            createFloorPlans();
+            updateLegend(currentState.metric);
+            updateSummary();
+            setupEventListeners();
+            // Start with building A, floor 1 active
+            changeFloorPlan('A', '1');
+        }
+        
+        // Start the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
